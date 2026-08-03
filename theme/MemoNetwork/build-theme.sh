@@ -17,7 +17,7 @@ MODULES=(
 )
 
 {
-  echo '/* MemoNetwork Edition v4.2 - generated file */'
+  echo '/* MemoNetwork Edition v4.3 - generated file */'
   for module in "${MODULES[@]}"; do
     echo
     echo "/* ===== $module ===== */"

@@ -25,7 +25,6 @@
     if (label.includes('cpu')) return parsePercent(value);
     if (label.includes('memory') || label.includes('ram')) return parseRatio(value);
     if (label.includes('user') || label.includes('player')) return parseRatio(value);
-
     return 0;
   };
 
@@ -46,7 +45,7 @@
     document.getElementById('mn-desktop-drawer-toggle')?.setAttribute('aria-expanded', 'false');
   };
 
-  const setupDesktopDrawer = () => {
+  const ensureDesktopDrawer = () => {
     let toggle = document.getElementById('mn-desktop-drawer-toggle');
     let backdrop = document.getElementById('mn-drawer-backdrop');
 
@@ -54,13 +53,19 @@
       toggle = document.createElement('button');
       toggle.id = 'mn-desktop-drawer-toggle';
       toggle.type = 'button';
-      toggle.textContent = '☰';
+      toggle.innerHTML = '<span aria-hidden="true">☰</span>';
       toggle.title = 'Menu';
       toggle.setAttribute('aria-label', 'Menu openen');
       toggle.setAttribute('aria-expanded', 'false');
+      document.body.append(toggle);
+    }
 
-      const topBar = document.querySelector('#barTop');
-      if (topBar) topBar.prepend(toggle);
+    if (!toggle.dataset.mnBound) {
+      toggle.dataset.mnBound = 'true';
+      toggle.addEventListener('click', () => {
+        const open = document.body.classList.toggle('mn-drawer-open');
+        toggle.setAttribute('aria-expanded', String(open));
+      });
     }
 
     if (!backdrop) {
@@ -69,24 +74,18 @@
       document.body.append(backdrop);
     }
 
-    toggle?.addEventListener('click', () => {
-      const open = document.body.classList.toggle('mn-drawer-open');
-      toggle.setAttribute('aria-expanded', String(open));
-    });
+    if (!backdrop.dataset.mnBound) {
+      backdrop.dataset.mnBound = 'true';
+      backdrop.addEventListener('click', closeDrawer);
+    }
 
-    backdrop?.addEventListener('click', closeDrawer);
-
-    document.querySelector('#sideMenuContainer')?.addEventListener('click', (event) => {
-      if (drawerMedia.matches && event.target.closest('a, button, .sideMenuItem')) closeDrawer();
-    });
-
-    drawerMedia.addEventListener?.('change', () => {
-      if (!drawerMedia.matches) closeDrawer();
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (event.key === 'Escape') closeDrawer();
-    });
+    const menu = document.querySelector('#sideMenuContainer');
+    if (menu && !menu.dataset.mnDrawerBound) {
+      menu.dataset.mnDrawerBound = 'true';
+      menu.addEventListener('click', (event) => {
+        if (drawerMedia.matches && event.target.closest('a, button, .sideMenuItem')) closeDrawer();
+      });
+    }
   };
 
   let queued = false;
@@ -96,12 +95,22 @@
     requestAnimationFrame(() => {
       queued = false;
       updateAll();
+      ensureDesktopDrawer();
     });
   };
 
   const start = () => {
     updateAll();
-    setupDesktopDrawer();
+    ensureDesktopDrawer();
+
+    drawerMedia.addEventListener?.('change', () => {
+      if (!drawerMedia.matches) closeDrawer();
+      ensureDesktopDrawer();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeDrawer();
+    });
 
     const observer = new MutationObserver(queueUpdate);
     observer.observe(document.body, {

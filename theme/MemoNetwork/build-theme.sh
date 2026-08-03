@@ -20,10 +20,11 @@ MODULES=(
   "75-scheduler-pro.css"
   "80-metrics-pro.css"
   "85-settings-pro.css"
+  "90-ui-polish.css"
 )
 
 {
-  echo '/* MemoNetwork Edition v4.8 - generated file */'
+  echo '/* MemoNetwork Edition v4.9 - generated file */'
   for module in "${MODULES[@]}"; do
     echo
     echo "/* ===== $module ===== */"

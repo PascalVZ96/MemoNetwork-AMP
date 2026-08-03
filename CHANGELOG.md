@@ -2,6 +2,24 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.2.0] - 2026-08-03
+
+### Toegevoegd
+
+- Verfijnde topzoekbalk met duidelijkere focusglow.
+- Rijkere `Local Instances`-header met subtiele dubbele gradient.
+- Strakkere quick-actionknoppen.
+- Subtiele hoverbeweging en sterkere gloed voor serverkaarten.
+- Extra statusglow voor actieve servers.
+- Vernieuwde `Create Instance`-kaart.
+- Subtiele aurora-gloed achter het MemoNetwork-logo.
+
+### Veiligheid
+
+- Geen wijzigingen aan AMP JavaScript of backend.
+- Geen vaste layout-offsets, sidebarbreedtes of aangepaste AMP-grid.
+- Animaties worden uitgeschakeld wanneer `prefers-reduced-motion` actief is.
+
 ## [4.1.0] - 2026-08-03
 
 ### Toegevoegd

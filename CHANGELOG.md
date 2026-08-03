@@ -2,6 +2,21 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.5.1] - 2026-08-03
+
+### Gewijzigd
+
+- CPU-, Memory- en Users-balken op de Instances-pagina gebruiken nu de live AMP-waarden.
+- `0%`, `0/16` en `0/20` tonen voortaan een lege balk.
+- Memory wordt berekend als gebruikt gedeeld door totaal.
+- Balken worden automatisch bijgewerkt wanneer Knockout de metrictekst vernieuwt.
+
+### Techniek
+
+- Nieuwe kleine `MemoNetwork.js`-module met een `MutationObserver`.
+- De installer voegt één veilige scriptreferentie toe aan `AMP.html` en voorkomt duplicaten.
+- Voor de eerste wijziging aan `AMP.html` wordt automatisch een back-up gemaakt.
+
 ## [4.5.0] - 2026-08-03
 
 ### Toegevoegd
@@ -99,7 +114,6 @@ Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden
 
 ### Beperkingen
 
-- De metricbalken zijn decoratief omdat AMP geen ruwe percentages aan CSS doorgeeft.
 - Automatische Fabric/Forge/Paper-badges zijn zonder extra JavaScript of AMP-data niet betrouwbaar mogelijk.
 
 ### Veiligheid

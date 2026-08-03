@@ -27,9 +27,11 @@ if [[ -d "$TARGET" ]]; then
     cp -a "$TARGET" "$BACKUP"
 fi
 
-if [[ -x "$SOURCE/build-theme.sh" ]]; then
+# Start het buildscript expliciet met Bash. Daardoor werkt de installatie ook
+# wanneer Git het uitvoerbare bestand-bit niet heeft behouden of /home noexec is.
+if [[ -f "$SOURCE/build-theme.sh" ]]; then
     echo "MemoNetwork.css bouwen..."
-    sudo -u amp -H "$SOURCE/build-theme.sh"
+    bash "$SOURCE/build-theme.sh"
 fi
 
 mkdir -p "$TARGET"

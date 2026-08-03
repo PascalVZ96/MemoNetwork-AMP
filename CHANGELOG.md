@@ -2,6 +2,30 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.4.0] - 2026-08-03
+
+### Toegevoegd
+
+- File Manager Pro-uitstraling met diepere panelen en subtiele cyaangloed.
+- Modernere breadcrumbs en navigatieknoppen.
+- Duidelijkere bestandsregels met rustige zebraweergave.
+- Sterkere hover- en selectiestatus voor bestanden en mappen.
+- Verfijnde map-, archief- en virtuele bestandsiconen.
+- Modernere detailkaart voor geselecteerde bestanden.
+- Styling voor uploadzones en voortgangsbalken wanneer AMP deze onderdelen toont.
+- Vernieuwd contextmenu en smalle File Manager-scrollbars.
+
+### Beperkingen
+
+- Er zijn geen nieuwe File Manager-functies toegevoegd; v4.4 wijzigt alleen de presentatie van bestaande AMP-onderdelen.
+- Afbeeldingspreview, extra bestandsacties en drag-and-dropfunctionaliteit verschijnen alleen wanneer AMP of de gebruikte module die functies al levert.
+
+### Veiligheid
+
+- Geen wijzigingen aan AMP JavaScript, backend of bestandsbewerkingen.
+- Geen vaste hoofdcontent-offsets of sidebarbreedtes toegevoegd.
+- Animaties worden uitgeschakeld wanneer `prefers-reduced-motion` actief is.
+
 ## [4.3.0] - 2026-08-03
 
 ### Toegevoegd

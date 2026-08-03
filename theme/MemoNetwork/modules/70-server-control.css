@@ -1,0 +1,246 @@
+/* ============================================================
+   MemoNetwork Edition v4.5 — Server Control Pro
+   Styling for AMP instance/server management pages.
+   ============================================================ */
+
+#moduleHeader,
+.moduleHeader,
+.instanceHeader,
+.serverHeader,
+#instanceHeader,
+#serverHeader,
+.titleBar {
+  position:relative;
+  overflow:hidden!important;
+  border:1px solid rgba(53,203,255,.24)!important;
+  border-radius:var(--mn-radius-lg)!important;
+  background:
+    radial-gradient(circle at 88% 0%,rgba(53,216,255,.15),transparent 30%),
+    radial-gradient(circle at 6% 100%,rgba(21,151,255,.10),transparent 32%),
+    linear-gradient(135deg,rgba(7,43,70,.98),rgba(7,24,40,.98))!important;
+  box-shadow:var(--mn-shadow-panel)!important;
+}
+#moduleHeader::after,
+.moduleHeader::after,
+.instanceHeader::after,
+.serverHeader::after,
+#instanceHeader::after,
+#serverHeader::after,
+.titleBar::after {
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:linear-gradient(115deg,transparent 0 38%,rgba(255,255,255,.025) 49%,transparent 60%);
+}
+
+#moduleHeader h1,
+#moduleHeader h2,
+.moduleHeader h1,
+.moduleHeader h2,
+.instanceHeader h1,
+.serverHeader h1,
+.titleBar h1,
+.titleBar h2 {
+  color:#fff!important;
+  font-weight:800!important;
+  letter-spacing:-.025em;
+  text-shadow:0 2px 12px rgba(0,0,0,.62),0 0 16px rgba(53,216,255,.08);
+}
+
+.tabHeaderContainer,
+.moduleTabs,
+.instanceTabs,
+.serverTabs {
+  border:1px solid rgba(53,203,255,.14)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(180deg,rgba(5,15,25,.94),rgba(2,9,16,.97))!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.20)!important;
+}
+.tabHeaderContainer .tabHeader,
+.moduleTabs .tabHeader,
+.instanceTabs .tabHeader,
+.serverTabs .tabHeader {
+  position:relative;
+  border-radius:9px!important;
+  color:#afc4d5!important;
+}
+.tabHeaderContainer .tabHeader.active,
+.moduleTabs .tabHeader.active,
+.instanceTabs .tabHeader.active,
+.serverTabs .tabHeader.active {
+  color:#fff!important;
+  background:linear-gradient(135deg,rgba(14,116,211,.82),rgba(31,190,247,.58))!important;
+  box-shadow:0 0 18px rgba(21,151,255,.10)!important;
+}
+.tabHeaderContainer .tabHeader.active::after,
+.moduleTabs .tabHeader.active::after,
+.instanceTabs .tabHeader.active::after,
+.serverTabs .tabHeader.active::after {
+  content:"";
+  position:absolute;
+  left:16%;
+  right:16%;
+  bottom:2px;
+  height:2px;
+  border-radius:999px;
+  background:var(--mn-cyan);
+  box-shadow:0 0 10px rgba(53,216,255,.55);
+}
+
+#instanceControlButtons,
+.instanceControlButtons,
+.serverControlButtons,
+.moduleControlButtons,
+#moduleControls,
+.moduleControls {
+  border:1px solid rgba(53,203,255,.16)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(180deg,rgba(5,16,28,.94),rgba(2,9,16,.98))!important;
+  box-shadow:var(--mn-shadow-panel)!important;
+}
+#instanceControlButtons button,
+.instanceControlButtons button,
+.serverControlButtons button,
+.moduleControlButtons button,
+#moduleControls button,
+.moduleControls button {
+  min-height:36px;
+  border-radius:9px!important;
+  font-weight:700!important;
+}
+#instanceControlButtons .bgGreen,
+.instanceControlButtons .bgGreen,
+.serverControlButtons .bgGreen,
+.moduleControlButtons .bgGreen {
+  background:linear-gradient(145deg,rgba(19,133,76,.98),rgba(7,71,43,.98))!important;
+  border-color:rgba(74,235,142,.66)!important;
+}
+#instanceControlButtons .bgRed,
+.instanceControlButtons .bgRed,
+.serverControlButtons .bgRed,
+.moduleControlButtons .bgRed {
+  background:linear-gradient(145deg,rgba(141,31,48,.98),rgba(72,12,24,.98))!important;
+  border-color:rgba(255,91,111,.62)!important;
+}
+#instanceControlButtons .bgOrange,
+.instanceControlButtons .bgOrange,
+.serverControlButtons .bgOrange,
+.moduleControlButtons .bgOrange {
+  background:linear-gradient(145deg,rgba(150,91,14,.98),rgba(78,43,4,.98))!important;
+  border-color:rgba(255,177,59,.64)!important;
+}
+
+.DisplayMetric,
+.metric,
+.metricCard,
+.serverMetric,
+.instanceMetric,
+.statusMetric,
+.statCard {
+  position:relative;
+  overflow:hidden!important;
+  border:1px solid rgba(53,203,255,.18)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(145deg,rgba(8,25,41,.96),rgba(3,12,21,.98))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.02),0 9px 24px rgba(0,0,0,.22)!important;
+}
+.DisplayMetric::before,
+.metricCard::before,
+.serverMetric::before,
+.instanceMetric::before,
+.statusMetric::before,
+.statCard::before {
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:3px;
+  background:linear-gradient(180deg,var(--mn-cyan),var(--mn-blue));
+  box-shadow:0 0 12px rgba(53,216,255,.32);
+}
+.DisplayMetric .mat-icon,
+.metricCard .mat-icon,
+.serverMetric .mat-icon,
+.instanceMetric .mat-icon,
+.statusMetric .mat-icon,
+.statCard .mat-icon {
+  color:var(--mn-cyan)!important;
+  filter:drop-shadow(0 0 7px rgba(53,216,255,.18));
+}
+
+.scheduleTriggerInfo,
+.scheduleEntry,
+.schedulerEntry,
+.taskEntry,
+.taskCard,
+.backupEntry,
+.backupCard,
+.backupItem,
+.backupContainer,
+#backupManager,
+.backupManager,
+.listenPort,
+.networkingEntry,
+.networkingCard,
+.portEntry,
+.portCard {
+  border:1px solid rgba(53,203,255,.16)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(145deg,rgba(9,23,38,.96),rgba(4,13,23,.98))!important;
+  box-shadow:0 9px 24px rgba(0,0,0,.20)!important;
+}
+.scheduleEntry:hover,
+.schedulerEntry:hover,
+.taskEntry:hover,
+.taskCard:hover,
+.backupEntry:hover,
+.backupCard:hover,
+.backupItem:hover,
+.listenPort:hover,
+.networkingEntry:hover,
+.networkingCard:hover,
+.portEntry:hover,
+.portCard:hover {
+  border-color:rgba(53,216,255,.34)!important;
+  box-shadow:var(--mn-shadow-hover)!important;
+}
+
+.chartContainer,
+.metricsContainer,
+.metricGraph,
+.graphContainer,
+canvas.chart,
+.metricsPanel {
+  border:1px solid rgba(53,203,255,.15)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(180deg,rgba(3,12,21,.96),rgba(2,8,15,.99))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.015),0 10px 26px rgba(0,0,0,.22)!important;
+}
+
+.settingsGroup input,
+.settingsGroup select,
+.settingsGroup textarea,
+.moduleContainer input,
+.moduleContainer select,
+.moduleContainer textarea {
+  min-height:34px;
+}
+
+.settingsGroup,
+.DisplayMetric,
+.scheduleTriggerInfo,
+.listenPort,
+.backupEntry,
+.backupCard,
+.networkingEntry,
+.networkingCard,
+.metricCard,
+.serverMetric {
+  transition:border-color var(--mn-transition),box-shadow var(--mn-transition),filter var(--mn-transition)!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .settingsGroup,.DisplayMetric,.scheduleTriggerInfo,.listenPort,.backupEntry,.backupCard,.networkingEntry,.networkingCard,.metricCard,.serverMetric{transition:none!important}
+}

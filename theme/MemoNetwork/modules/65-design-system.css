@@ -1,0 +1,145 @@
+/* ============================================================
+   MemoNetwork Edition v4.5 — Design System
+   Reusable visual language mapped onto existing AMP components.
+   No JavaScript or layout offsets.
+   ============================================================ */
+
+:root {
+  --mn-radius-sm:8px;
+  --mn-radius-md:12px;
+  --mn-radius-lg:16px;
+  --mn-surface-0:rgba(3,10,18,.98);
+  --mn-surface-1:rgba(7,18,30,.96);
+  --mn-surface-2:rgba(11,27,43,.94);
+  --mn-glass:linear-gradient(145deg,rgba(12,29,47,.94),rgba(5,15,26,.96));
+  --mn-shadow-panel:0 12px 30px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.025);
+  --mn-shadow-hover:0 16px 36px rgba(0,0,0,.34),0 0 26px rgba(21,151,255,.09);
+  --mn-focus-ring:0 0 0 3px rgba(53,216,255,.09),0 0 20px rgba(21,151,255,.10);
+}
+
+.well,
+.settingsGroup,
+.settingsGroup .groupBody,
+.settingContainer,
+.DisplayMetric,
+.scheduleTriggerInfo,
+.listenPort,
+.datastoreItem,
+.sideItemList,
+.modalpanel,
+.wizardContents,
+.card,
+.panel,
+.moduleCard {
+  border-color:var(--mn-border)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:var(--mn-glass)!important;
+  box-shadow:var(--mn-shadow-panel)!important;
+}
+
+.buttonGroup,
+.toolbar,
+.toolBar,
+.actionBar,
+.moduleActions,
+.pageActions,
+.serverActions {
+  border:1px solid rgba(53,203,255,.14)!important;
+  border-radius:var(--mn-radius-md)!important;
+  background:linear-gradient(180deg,rgba(5,15,25,.92),rgba(2,9,16,.96))!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.018),0 8px 22px rgba(0,0,0,.18)!important;
+}
+
+button,
+.button,
+input[type='button'],
+input[type='submit'],
+.iconButton {
+  transition:filter var(--mn-transition),border-color var(--mn-transition),box-shadow var(--mn-transition),transform var(--mn-transition)!important;
+}
+button:hover,
+.button:hover,
+input[type='button']:hover,
+input[type='submit']:hover,
+.iconButton:hover {
+  filter:brightness(1.12);
+  box-shadow:0 0 16px rgba(53,216,255,.08)!important;
+}
+button:active,
+.button:active,
+input[type='button']:active,
+input[type='submit']:active,
+.iconButton:active {
+  transform:translateY(1px);
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+.popupTrigger:focus,
+.focused {
+  outline:none!important;
+  border-color:rgba(53,216,255,.68)!important;
+  box-shadow:var(--mn-focus-ring)!important;
+}
+
+.bgGreen,
+.statusRunning,
+.statusOnline,
+.success,
+.notificationSuccess { --mn-status-accent:var(--mn-green); }
+.bgRed,
+.statusFailed,
+.statusOffline,
+.error,
+.notificationError { --mn-status-accent:var(--mn-red); }
+.bgOrange,
+.bgAmber,
+.statusBusy,
+.statusStarting,
+.warning,
+.notificationWarning { --mn-status-accent:var(--mn-amber); }
+.bgBlue,
+.statusUpdating,
+.info,
+.notificationInfo { --mn-status-accent:var(--mn-cyan); }
+
+.ServerEntryStatus,
+.statusBadge,
+.statusChip,
+.badge,
+.chip {
+  border-radius:999px!important;
+  border:1px solid rgba(53,216,255,.36)!important;
+  box-shadow:0 0 14px rgba(53,216,255,.10)!important;
+  text-transform:uppercase;
+  letter-spacing:.045em;
+  font-weight:700!important;
+}
+
+progress,
+.progress,
+.progressBar,
+.uploadProgress,
+.backupProgress {
+  overflow:hidden!important;
+  border:1px solid rgba(53,203,255,.18)!important;
+  border-radius:999px!important;
+  background:rgba(2,8,15,.94)!important;
+  box-shadow:inset 0 2px 5px rgba(0,0,0,.42)!important;
+}
+progress::-webkit-progress-bar { background:rgba(2,8,15,.94); }
+progress::-webkit-progress-value,
+.progressBar > *,
+.uploadProgress > *,
+.backupProgress > * {
+  background:linear-gradient(90deg,var(--mn-blue),var(--mn-cyan))!important;
+  box-shadow:0 0 14px rgba(53,216,255,.20)!important;
+}
+progress::-moz-progress-bar {
+  background:linear-gradient(90deg,var(--mn-blue),var(--mn-cyan))!important;
+}
+
+@media(prefers-reduced-motion:reduce){
+  button:active,.button:active,input[type='button']:active,input[type='submit']:active,.iconButton:active{transform:none!important}
+}

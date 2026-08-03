@@ -2,6 +2,24 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.5.0] - 2026-08-03
+
+### Toegevoegd
+
+- Eerste MemoNetwork design-systemmodule met vaste surfaces, radii, schaduwen, focusringen en statustinten.
+- Server Control Pro-styling voor instanceheaders, tabs en actietoolbars.
+- Consistente Start-, Stop-, Restart- en waarschuwingsknoppen.
+- Premium status- en metricpanelen voor geopende serverpagina's.
+- Verfijnde Scheduler-, Backup-, Networking- en Metrics-panelen.
+- Uniforme voortgangsbalken, focusweergave en statuschips.
+
+### Veiligheid
+
+- Geen AMP JavaScript- of backendwijzigingen.
+- Geen vaste hoofdcontent-offsets, sidebarbreedtes of gewijzigde AMP-grid.
+- Alleen bestaande AMP-componenten worden visueel gestyled.
+- Reduced-motion ondersteuning blijft behouden.
+
 ## [4.4.0] - 2026-08-03
 
 ### Toegevoegd

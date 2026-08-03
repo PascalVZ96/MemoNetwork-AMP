@@ -46,7 +46,12 @@
 
     menu.querySelectorAll('img').forEach((image) => {
       const src = image.getAttribute('src') ?? '';
-      if (/FullLogo|MemoNetwork/i.test(src)) {
+      const alt = image.getAttribute('alt') ?? '';
+      const rect = image.getBoundingClientRect();
+      const isLargeBranding = rect.width > 58 || rect.height > 58;
+      const looksLikeBranding = /FullLogo|MemoNetwork|logo/i.test(`${src} ${alt}`);
+
+      if (isLargeBranding || looksLikeBranding) {
         image.classList.add('mn-drawer-hide');
         const parent = image.parentElement;
         if (parent && parent.children.length === 1) parent.classList.add('mn-drawer-hide');
@@ -113,7 +118,7 @@
       });
     }
 
-    markDrawerChrome();
+    requestAnimationFrame(markDrawerChrome);
   };
 
   let queued = false;

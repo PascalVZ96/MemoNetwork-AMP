@@ -1,0 +1,237 @@
+/* MemoNetwork Edition v4.7 — Metrics Pro */
+
+/* Metric dashboard surfaces */
+#metricsDisplay,
+.metricsDisplay,
+.metricsContainer,
+.analyticsContainer,
+.analyticsPanel,
+.chartContainer,
+.graphContainer,
+.DisplayMetric,
+.metricContainer,
+.metricPanel {
+    background:
+        radial-gradient(circle at 90% 0%, rgba(40, 176, 255, 0.09), transparent 34%),
+        linear-gradient(145deg, rgba(6, 18, 31, 0.98), rgba(3, 11, 20, 0.99)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.17) !important;
+    border-radius: 13px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.018),
+        0 11px 28px rgba(0, 0, 0, 0.24) !important;
+}
+
+/* Metric cards */
+.DisplayMetric,
+.metricContainer,
+.metricPanel {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform var(--mn-transition),
+        border-color var(--mn-transition),
+        box-shadow var(--mn-transition) !important;
+}
+
+.DisplayMetric:hover,
+.metricContainer:hover,
+.metricPanel:hover {
+    transform: translateY(-2px);
+    border-color: rgba(72, 220, 255, 0.42) !important;
+    box-shadow:
+        0 14px 32px rgba(0, 0, 0, 0.30),
+        0 0 22px rgba(30, 171, 255, 0.08) !important;
+}
+
+.DisplayMetric::after,
+.metricContainer::after,
+.metricPanel::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(53, 216, 255, 0.78), transparent);
+    opacity: 0.66;
+    pointer-events: none;
+}
+
+/* Metric labels and values */
+.DisplayMetric h3,
+.DisplayMetric h4,
+.metricContainer h3,
+.metricContainer h4,
+.metricPanel h3,
+.metricPanel h4,
+.metricLabel,
+.metricTitle {
+    color: #eaf8ff !important;
+}
+
+.metricValue,
+.DisplayMetric .value,
+.DisplayMetric .metricValue,
+.metricContainer .value {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em;
+    text-shadow: 0 0 14px rgba(53, 216, 255, 0.10);
+}
+
+.metricUnit,
+.metricSubtitle,
+.DisplayMetric small {
+    color: rgba(176, 207, 225, 0.72) !important;
+}
+
+/* Charts and canvases */
+.chartContainer,
+.graphContainer,
+.analyticsPanel {
+    padding: 12px !important;
+}
+
+.chartContainer canvas,
+.graphContainer canvas,
+.analyticsPanel canvas,
+svg.chart,
+svg.graph {
+    border-radius: 10px;
+    filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.22));
+}
+
+/* Chart legend */
+.chartLegend,
+.legend,
+.analyticsLegend {
+    color: #cce3ef !important;
+    background: rgba(3, 12, 22, 0.72) !important;
+    border: 1px solid rgba(53, 203, 255, 0.12) !important;
+    border-radius: 9px !important;
+}
+
+.chartLegend > *,
+.legend > *,
+.analyticsLegend > * {
+    border-color: rgba(80, 132, 162, 0.11) !important;
+}
+
+/* Metric tables */
+.metricsTable,
+.analyticsTable,
+#metricsDisplay table,
+.analyticsContainer table {
+    background: rgba(3, 11, 20, 0.82) !important;
+    border: 1px solid rgba(53, 203, 255, 0.14) !important;
+    border-radius: 11px !important;
+    overflow: hidden;
+}
+
+.metricsTable thead,
+.analyticsTable thead,
+#metricsDisplay table thead,
+.analyticsContainer table thead {
+    background: linear-gradient(180deg, rgba(10, 72, 112, 0.44), rgba(5, 31, 51, 0.62)) !important;
+}
+
+.metricsTable tbody tr:hover,
+.analyticsTable tbody tr:hover,
+#metricsDisplay table tbody tr:hover,
+.analyticsContainer table tbody tr:hover {
+    background: rgba(36, 165, 226, 0.055) !important;
+}
+
+/* Progress and gauge components already provided by AMP */
+.metricsContainer progress,
+.analyticsContainer progress,
+.DisplayMetric progress,
+.metricContainer progress {
+    height: 8px !important;
+    border-radius: 999px !important;
+    overflow: hidden;
+    background: rgba(3, 13, 23, 0.95) !important;
+}
+
+.metricsContainer progress::-webkit-progress-bar,
+.analyticsContainer progress::-webkit-progress-bar,
+.DisplayMetric progress::-webkit-progress-bar,
+.metricContainer progress::-webkit-progress-bar {
+    background: rgba(3, 13, 23, 0.95) !important;
+    border-radius: 999px !important;
+}
+
+.metricsContainer progress::-webkit-progress-value,
+.analyticsContainer progress::-webkit-progress-value,
+.DisplayMetric progress::-webkit-progress-value,
+.metricContainer progress::-webkit-progress-value {
+    background: linear-gradient(90deg, #1597ff, #35d8ff) !important;
+    border-radius: 999px !important;
+    box-shadow: 0 0 12px rgba(53, 216, 255, 0.22);
+}
+
+.metricsContainer progress::-moz-progress-bar,
+.analyticsContainer progress::-moz-progress-bar,
+.DisplayMetric progress::-moz-progress-bar,
+.metricContainer progress::-moz-progress-bar {
+    background: linear-gradient(90deg, #1597ff, #35d8ff) !important;
+    border-radius: 999px !important;
+}
+
+/* Analytics controls */
+.analyticsContainer select,
+.analyticsContainer input,
+.metricsContainer select,
+.metricsContainer input {
+    color: #eaf8ff !important;
+    background: linear-gradient(145deg, rgba(4, 17, 30, 0.98), rgba(2, 10, 19, 0.98)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.23) !important;
+    border-radius: 9px !important;
+}
+
+.analyticsContainer select:focus,
+.analyticsContainer input:focus,
+.metricsContainer select:focus,
+.metricsContainer input:focus {
+    border-color: rgba(53, 216, 255, 0.68) !important;
+    box-shadow: 0 0 0 3px rgba(53, 216, 255, 0.08) !important;
+}
+
+/* Scrollbars inside analytics panels */
+.analyticsContainer,
+.metricsContainer,
+.chartContainer,
+.graphContainer {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(42, 177, 232, 0.50) rgba(2, 9, 17, 0.70);
+}
+
+.analyticsContainer::-webkit-scrollbar,
+.metricsContainer::-webkit-scrollbar,
+.chartContainer::-webkit-scrollbar,
+.graphContainer::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.analyticsContainer::-webkit-scrollbar-thumb,
+.metricsContainer::-webkit-scrollbar-thumb,
+.chartContainer::-webkit-scrollbar-thumb,
+.graphContainer::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(31, 163, 221, 0.72), rgba(18, 93, 140, 0.72));
+    border-radius: 999px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .DisplayMetric,
+    .metricContainer,
+    .metricPanel {
+        transition: none !important;
+    }
+
+    .DisplayMetric:hover,
+    .metricContainer:hover,
+    .metricPanel:hover {
+        transform: none !important;
+    }
+}

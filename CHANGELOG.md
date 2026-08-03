@@ -2,6 +2,25 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.6.0] - 2026-08-03
+
+### Toegevoegd
+
+- Scheduler Pro-uitstraling voor taken, triggers en planningspanelen.
+- Modernere taak- en triggerkaarten met subtiele cyaanaccenten.
+- Strakkere scheduler-toolbars en actieknoppen.
+- Duidelijkere hover- en selectieweergave.
+- Consistente invoervelden, dropdowns en focusringen.
+- Technische weergave voor volgende en laatste uitvoering.
+- Vernieuwde scheduler-tabellen en statusweergave.
+- Reduced-motion ondersteuning voor scheduleranimaties.
+
+### Veiligheid
+
+- Geen AMP JavaScript-, backend- of planningslogica gewijzigd.
+- Geen nieuwe schedulerfuncties toegevoegd.
+- Geen vaste hoofdcontent-offsets, sidebarbreedtes of gridwijzigingen.
+
 ## [4.5.1] - 2026-08-03
 
 ### Gewijzigd

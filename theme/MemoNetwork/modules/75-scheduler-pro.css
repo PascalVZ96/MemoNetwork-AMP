@@ -1,0 +1,230 @@
+/* MemoNetwork Edition v4.6 — Scheduler Pro */
+
+/* Scheduler page shell */
+.scheduleTriggerInfo,
+.scheduleEntry,
+.schedulerEntry,
+.scheduleTask,
+.taskEntry,
+.triggerContainer,
+.scheduleContainer,
+#scheduleContainer,
+#schedulerContainer {
+    background:
+        linear-gradient(145deg, rgba(7, 20, 34, 0.97), rgba(3, 12, 22, 0.98)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.17) !important;
+    border-radius: 12px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.018),
+        0 10px 26px rgba(0,0,0,0.22) !important;
+}
+
+.scheduleEntry,
+.schedulerEntry,
+.scheduleTask,
+.taskEntry {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        background-color 160ms ease !important;
+}
+
+.scheduleEntry::before,
+.schedulerEntry::before,
+.scheduleTask::before,
+.taskEntry::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: linear-gradient(180deg, #39d8ff, #127dff);
+    opacity: 0.76;
+    pointer-events: none;
+}
+
+.scheduleEntry:hover,
+.schedulerEntry:hover,
+.scheduleTask:hover,
+.taskEntry:hover {
+    transform: translateY(-2px);
+    border-color: rgba(74, 218, 255, 0.38) !important;
+    box-shadow:
+        0 14px 30px rgba(0,0,0,0.27),
+        0 0 18px rgba(29, 164, 255, 0.07) !important;
+}
+
+/* Scheduler titles and metadata */
+.scheduleEntry h3,
+.schedulerEntry h3,
+.scheduleTask h3,
+.taskEntry h3,
+.scheduleTriggerInfo h3,
+.scheduleTriggerInfo h4 {
+    color: #effaff !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.015em;
+}
+
+.scheduleEntry h5,
+.schedulerEntry h5,
+.scheduleTask h5,
+.taskEntry h5,
+.scheduleTriggerInfo small,
+.scheduleTriggerInfo .description {
+    color: rgba(183, 209, 224, 0.74) !important;
+}
+
+/* Trigger chips */
+.scheduleTriggerInfo,
+.triggerInfo,
+.scheduleType,
+.scheduleState,
+.taskState {
+    color: #dff8ff !important;
+}
+
+.scheduleTriggerInfo .mat-icon,
+.triggerInfo .mat-icon,
+.scheduleType .mat-icon {
+    color: #45dcff !important;
+    filter: drop-shadow(0 0 7px rgba(53,216,255,0.13));
+}
+
+/* Scheduler toolbar and action buttons */
+.scheduleToolbar,
+.schedulerToolbar,
+#scheduleToolbar,
+.taskToolbar {
+    background:
+        linear-gradient(145deg, rgba(8, 29, 49, 0.94), rgba(4, 17, 30, 0.96)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.16) !important;
+    border-radius: 11px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.018), 0 8px 20px rgba(0,0,0,0.18) !important;
+}
+
+.scheduleToolbar button,
+.schedulerToolbar button,
+#scheduleToolbar button,
+.taskToolbar button,
+.scheduleEntry button,
+.schedulerEntry button,
+.scheduleTask button,
+.taskEntry button {
+    border-radius: 9px !important;
+    border-color: rgba(59, 204, 255, 0.34) !important;
+    background:
+        linear-gradient(145deg, rgba(9, 62, 97, 0.96), rgba(4, 35, 59, 0.97)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.025), 0 4px 10px rgba(0,0,0,0.16) !important;
+}
+
+.scheduleToolbar button:hover,
+.schedulerToolbar button:hover,
+#scheduleToolbar button:hover,
+.taskToolbar button:hover,
+.scheduleEntry button:hover,
+.schedulerEntry button:hover,
+.scheduleTask button:hover,
+.taskEntry button:hover {
+    filter: brightness(1.15);
+    border-color: rgba(103, 229, 255, 0.74) !important;
+    box-shadow: 0 0 15px rgba(42, 187, 255, 0.11), inset 0 1px 0 rgba(255,255,255,0.04) !important;
+}
+
+/* Enable/disable controls */
+.scheduleEntry input[type="checkbox"],
+.schedulerEntry input[type="checkbox"],
+.scheduleTask input[type="checkbox"],
+.taskEntry input[type="checkbox"] {
+    accent-color: #22c77a;
+}
+
+.scheduleEntry .toggleSwitch,
+.schedulerEntry .toggleSwitch,
+.scheduleTask .toggleSwitch,
+.taskEntry .toggleSwitch,
+.scheduleEntry .switch,
+.schedulerEntry .switch {
+    filter: drop-shadow(0 0 8px rgba(53,216,255,0.08));
+}
+
+/* Scheduler forms */
+.scheduleContainer input,
+.scheduleContainer select,
+.scheduleContainer textarea,
+#scheduleContainer input,
+#scheduleContainer select,
+#scheduleContainer textarea,
+.schedulerContainer input,
+.schedulerContainer select,
+.schedulerContainer textarea {
+    color: #edfaff !important;
+    background: linear-gradient(145deg, rgba(4, 16, 28, 0.98), rgba(2, 10, 19, 0.98)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.22) !important;
+    border-radius: 9px !important;
+}
+
+.scheduleContainer input:focus,
+.scheduleContainer select:focus,
+.scheduleContainer textarea:focus,
+#scheduleContainer input:focus,
+#scheduleContainer select:focus,
+#scheduleContainer textarea:focus,
+.schedulerContainer input:focus,
+.schedulerContainer select:focus,
+.schedulerContainer textarea:focus {
+    border-color: rgba(53, 216, 255, 0.68) !important;
+    box-shadow: 0 0 0 3px rgba(53,216,255,0.08), 0 0 17px rgba(21,151,255,0.08) !important;
+}
+
+/* Timeline / next-run emphasis */
+.nextRun,
+.nextExecution,
+.scheduleNextRun,
+.taskNextRun {
+    color: #81e7ff !important;
+    font-family: "Cascadia Mono", "Consolas", monospace !important;
+    font-weight: 600 !important;
+}
+
+.lastRun,
+.lastExecution,
+.scheduleLastRun,
+.taskLastRun {
+    color: rgba(174, 200, 216, 0.74) !important;
+    font-family: "Cascadia Mono", "Consolas", monospace !important;
+}
+
+/* Scheduler tables */
+.scheduleContainer table,
+#scheduleContainer table,
+.schedulerContainer table {
+    overflow: hidden;
+    border-radius: 11px !important;
+    background: rgba(3, 11, 20, 0.95) !important;
+    border: 1px solid rgba(53,203,255,0.14) !important;
+}
+
+.scheduleContainer thead,
+#scheduleContainer thead,
+.schedulerContainer thead {
+    background: linear-gradient(180deg, rgba(9, 61, 95, 0.54), rgba(4, 28, 48, 0.62)) !important;
+}
+
+.scheduleContainer tbody tr:hover,
+#scheduleContainer tbody tr:hover,
+.schedulerContainer tbody tr:hover {
+    background: rgba(32, 151, 216, 0.055) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scheduleEntry,
+    .schedulerEntry,
+    .scheduleTask,
+    .taskEntry {
+        transition: none !important;
+        transform: none !important;
+    }
+}

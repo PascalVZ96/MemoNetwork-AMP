@@ -1,0 +1,17 @@
+/* MemoNetwork Edition v4.5.1 — live metric progress */
+
+.ServerEntryMetric::after {
+    width: var(--mn-progress, 0%) !important;
+    transition: width 320ms ease !important;
+}
+
+.ServerEntryMetric[data-mn-progress="0.00"]::after {
+    box-shadow: none !important;
+    opacity: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ServerEntryMetric::after {
+        transition: none !important;
+    }
+}

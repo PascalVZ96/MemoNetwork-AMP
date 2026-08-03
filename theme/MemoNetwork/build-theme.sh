@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+OUT="$ROOT/MemoNetwork.css"
+
+MODULES=(
+  "00-variables.css"
+  "10-base.css"
+  "20-login.css"
+  "30-instance-cards.css"
+  "40-console.css"
+  "50-filemanager.css"
+  "60-shared-panels.css"
+)
+
+{
+  echo '/* MemoNetwork Edition v4.0 - generated file */'
+  for module in "${MODULES[@]}"; do
+    echo
+    echo "/* ===== $module ===== */"
+    cat "$ROOT/modules/$module"
+  done
+} > "$OUT"
+
+echo "Gebouwd: $OUT"

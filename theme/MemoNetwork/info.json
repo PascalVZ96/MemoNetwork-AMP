@@ -1,8 +1,8 @@
 {
   "Name": "MemoNetwork",
-  "Version": "4.2.0",
+  "Version": "4.3.0",
   "UpdatedDate": "2026/08/03",
-  "Description": "MemoNetwork Edition v4.2 with polished dashboard header, search and instance interactions",
+  "Description": "MemoNetwork Edition v4.3 with Console Pro styling and refined log readability",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
   "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular"]

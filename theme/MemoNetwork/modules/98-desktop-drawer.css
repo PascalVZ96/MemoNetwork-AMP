@@ -1,5 +1,10 @@
 /* MemoNetwork v5.0.2 — narrow desktop drawer */
 
+#mn-desktop-drawer-toggle,
+#mn-drawer-backdrop {
+  display: none;
+}
+
 @media (min-width: 701px) and (max-width: 1180px) {
   #sideMenuContainer {
     position: fixed !important;
@@ -41,19 +46,29 @@
     width: 100% !important;
   }
 
+  #barTop {
+    padding-left: 62px !important;
+    box-sizing: border-box !important;
+  }
+
   #mn-desktop-drawer-toggle {
+    position: fixed !important;
+    top: 8px !important;
+    left: 10px !important;
+    z-index: 10070 !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
-    flex: 0 0 auto !important;
     width: 44px !important;
+    min-width: 44px !important;
     height: 40px !important;
-    margin-right: 8px !important;
+    margin: 0 !important;
     padding: 0 !important;
     color: #f4fbff !important;
     background: linear-gradient(145deg,rgba(7,47,76,.98),rgba(3,27,47,.98)) !important;
     border: 1px solid rgba(56,205,255,.50) !important;
     border-radius: 9px !important;
+    box-shadow: 0 6px 18px rgba(0,0,0,.30) !important;
     font-size: 26px !important;
     line-height: 1 !important;
     cursor: pointer !important;
@@ -64,17 +79,21 @@
     border-color: rgba(105,229,255,.88) !important;
   }
 
+  body.mn-drawer-open #mn-desktop-drawer-toggle {
+    left: 240px !important;
+  }
+
   #mn-drawer-backdrop {
-    position: fixed;
-    inset: 0;
-    z-index: 10040;
-    display: none;
-    background: rgba(0,5,12,.62);
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 10040 !important;
+    display: none !important;
+    background: rgba(0,5,12,.62) !important;
     backdrop-filter: blur(2px);
   }
 
   body.mn-drawer-open #mn-drawer-backdrop {
-    display: block;
+    display: block !important;
   }
 
   #sideMenuContainer::after {
@@ -83,5 +102,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #sideMenuContainer { transition: none !important; }
+  #sideMenuContainer,
+  #mn-desktop-drawer-toggle {
+    transition: none !important;
+  }
 }

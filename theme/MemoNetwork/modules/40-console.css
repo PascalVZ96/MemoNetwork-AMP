@@ -1,1 +1,202 @@
-#consoleArea,.consoleArea,.consoleContainer,#consoleOutput{color:#d8e7f2!important;background:radial-gradient(circle at 85% 0%,rgba(20,130,205,.07),transparent 35%),linear-gradient(180deg,rgba(2,8,15,.98),rgba(3,11,20,.99))!important;border:1px solid rgba(53,203,255,.18)!important;border-radius:12px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.018),0 12px 28px rgba(0,0,0,.26)!important}#consoleArea,#consoleArea *,.consoleArea,.consoleArea *,.consoleEntry,.consoleEntry *{font-family:'Cascadia Mono','Consolas','Liberation Mono',monospace!important}.consoleEntry{border-bottom:1px solid rgba(75,121,151,.07)!important}.consoleEntry:hover{background:rgba(35,157,225,.035)!important}.consoleEntry .consoleTimestamp{color:rgba(127,154,174,.66)!important}.consoleEntry .consoleName{color:#4fd8ff!important;font-weight:600!important}#consoleLineEntry,.consoleLineEntry,#consoleInput,input[data-bind*='console']{color:#eefaff!important;background:linear-gradient(145deg,rgba(4,17,30,.98),rgba(2,10,19,.98))!important;border:1px solid rgba(53,203,255,.26)!important;border-radius:9px!important}#consoleLineEntry:focus,.consoleLineEntry:focus,#consoleInput:focus,input[data-bind*='console']:focus{border-color:rgba(53,216,255,.68)!important;box-shadow:0 0 0 3px rgba(53,216,255,.08),0 0 18px rgba(21,151,255,.09)!important}
+/* ============================================================
+   MemoNetwork Edition v4.3 — Console Pro
+   Visual-only console refinement. No AMP JavaScript changes.
+   ============================================================ */
+
+#consoleArea,
+.consoleArea,
+.consoleContainer,
+#consoleOutput,
+.consoleOutput {
+    color: #d8e7f2 !important;
+    background:
+        radial-gradient(circle at 88% 0%, rgba(21, 151, 255, 0.09), transparent 34%),
+        linear-gradient(180deg, rgba(2, 8, 15, 0.99), rgba(2, 10, 18, 0.99)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.20) !important;
+    border-radius: 13px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.018),
+        inset 0 0 32px rgba(21, 151, 255, 0.018),
+        0 14px 32px rgba(0, 0, 0, 0.28) !important;
+}
+
+#consoleArea,
+#consoleArea *,
+.consoleArea,
+.consoleArea *,
+.consoleEntry,
+.consoleEntry *,
+#consoleOutput,
+#consoleOutput * {
+    font-family: "Cascadia Mono", "Consolas", "Liberation Mono", monospace !important;
+}
+
+.consoleEntry,
+.consoleLine,
+.consoleMessage {
+    border-bottom: 1px solid rgba(75, 121, 151, 0.07) !important;
+    transition: background-color 140ms ease, box-shadow 140ms ease !important;
+}
+
+.consoleEntry:hover,
+.consoleLine:hover,
+.consoleMessage:hover {
+    background: linear-gradient(90deg, rgba(35, 157, 225, 0.055), transparent 78%) !important;
+    box-shadow: inset 2px 0 0 rgba(53, 216, 255, 0.16) !important;
+}
+
+.consoleEntry .consoleTimestamp,
+.consoleTimestamp,
+.consoleTime {
+    color: rgba(130, 160, 181, 0.70) !important;
+}
+
+.consoleEntry .consoleName,
+.consoleName,
+.consoleSource {
+    color: #4fd8ff !important;
+    font-weight: 650 !important;
+}
+
+/* AMP-provided severity classes, when present. */
+.consoleEntry.warning,
+.consoleEntry.warn,
+.consoleLine.warning,
+.consoleLine.warn,
+.consoleMessage.warning,
+.consoleMessage.warn,
+.logWarning,
+.logWarn {
+    color: #ffd48a !important;
+    background: linear-gradient(90deg, rgba(255, 174, 54, 0.08), transparent 75%) !important;
+    box-shadow: inset 3px 0 0 rgba(255, 177, 64, 0.70) !important;
+}
+
+.consoleEntry.error,
+.consoleLine.error,
+.consoleMessage.error,
+.logError {
+    color: #ffb7c1 !important;
+    background: linear-gradient(90deg, rgba(255, 73, 101, 0.09), transparent 75%) !important;
+    box-shadow: inset 3px 0 0 rgba(255, 86, 110, 0.78) !important;
+}
+
+.consoleEntry.success,
+.consoleLine.success,
+.consoleMessage.success,
+.logSuccess {
+    color: #b8f6d0 !important;
+    background: linear-gradient(90deg, rgba(53, 208, 127, 0.07), transparent 75%) !important;
+    box-shadow: inset 3px 0 0 rgba(53, 208, 127, 0.68) !important;
+}
+
+#consoleLineEntry,
+.consoleLineEntry,
+#consoleInput,
+input[data-bind*="console"],
+textarea[data-bind*="console"] {
+    color: #eefaff !important;
+    caret-color: #35d8ff !important;
+    background:
+        linear-gradient(145deg, rgba(4, 18, 31, 0.99), rgba(2, 10, 19, 0.99)) !important;
+    border: 1px solid rgba(53, 203, 255, 0.28) !important;
+    border-radius: 10px !important;
+    box-shadow:
+        inset 0 1px 4px rgba(0, 0, 0, 0.40),
+        0 7px 18px rgba(0, 0, 0, 0.16) !important;
+    transition: border-color 150ms ease, box-shadow 150ms ease, background-color 150ms ease !important;
+}
+
+#consoleLineEntry:focus,
+.consoleLineEntry:focus,
+#consoleInput:focus,
+input[data-bind*="console"]:focus,
+textarea[data-bind*="console"]:focus {
+    border-color: rgba(53, 216, 255, 0.72) !important;
+    box-shadow:
+        0 0 0 3px rgba(53, 216, 255, 0.085),
+        0 0 20px rgba(21, 151, 255, 0.10),
+        inset 0 1px 4px rgba(0, 0, 0, 0.34) !important;
+}
+
+#consoleLineEntry::placeholder,
+.consoleLineEntry::placeholder,
+#consoleInput::placeholder,
+input[data-bind*="console"]::placeholder,
+textarea[data-bind*="console"]::placeholder {
+    color: rgba(155, 181, 198, 0.48) !important;
+}
+
+#consoleControls,
+.consoleControls,
+.consoleToolbar {
+    background: rgba(3, 12, 22, 0.82) !important;
+    border: 1px solid rgba(53, 203, 255, 0.12) !important;
+    border-radius: 10px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.014) !important;
+}
+
+#consoleControls button,
+.consoleControls button,
+.consoleToolbar button {
+    border-radius: 8px !important;
+}
+
+/* Console-specific scrollbars. */
+#consoleArea,
+.consoleArea,
+.consoleContainer,
+#consoleOutput,
+.consoleOutput {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(53, 203, 255, 0.50) rgba(2, 9, 17, 0.60);
+}
+
+#consoleArea::-webkit-scrollbar,
+.consoleArea::-webkit-scrollbar,
+.consoleContainer::-webkit-scrollbar,
+#consoleOutput::-webkit-scrollbar,
+.consoleOutput::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+#consoleArea::-webkit-scrollbar-track,
+.consoleArea::-webkit-scrollbar-track,
+.consoleContainer::-webkit-scrollbar-track,
+#consoleOutput::-webkit-scrollbar-track,
+.consoleOutput::-webkit-scrollbar-track {
+    background: rgba(2, 9, 17, 0.68);
+    border-radius: 999px;
+}
+
+#consoleArea::-webkit-scrollbar-thumb,
+.consoleArea::-webkit-scrollbar-thumb,
+.consoleContainer::-webkit-scrollbar-thumb,
+#consoleOutput::-webkit-scrollbar-thumb,
+.consoleOutput::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, rgba(22, 159, 224, 0.82), rgba(7, 89, 137, 0.88));
+    border: 2px solid rgba(2, 9, 17, 0.72);
+    border-radius: 999px;
+}
+
+#consoleArea::-webkit-scrollbar-thumb:hover,
+.consoleArea::-webkit-scrollbar-thumb:hover,
+.consoleContainer::-webkit-scrollbar-thumb:hover,
+#consoleOutput::-webkit-scrollbar-thumb:hover,
+.consoleOutput::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, rgba(53, 216, 255, 0.94), rgba(12, 120, 180, 0.94));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .consoleEntry,
+    .consoleLine,
+    .consoleMessage,
+    #consoleLineEntry,
+    .consoleLineEntry,
+    #consoleInput,
+    input[data-bind*="console"],
+    textarea[data-bind*="console"] {
+        transition: none !important;
+    }
+}

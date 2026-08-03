@@ -1,4 +1,4 @@
-/* MemoNetwork Edition v5.0
+/* MemoNetwork Edition v5.0.1
  * Direct browser build. The install script replaces this with a compiled file.
  */
 @import url("modules/00-variables.css");
@@ -18,3 +18,4 @@
 @import url("modules/85-settings-pro.css");
 @import url("modules/90-ui-polish.css");
 @import url("modules/95-v5-branding.css");
+@import url("modules/99-responsive-fix.css");

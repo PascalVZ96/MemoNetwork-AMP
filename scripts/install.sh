@@ -7,7 +7,8 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_TAG='    <script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=451"></script>'
+SCRIPT_VERSION="503"
+SCRIPT_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
     echo "Gebruik: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -42,11 +43,11 @@ find "$TARGET" -type d -exec chmod 755 {} \;
 find "$TARGET" -type f -exec chmod 644 {} \;
 chmod 755 "$TARGET/build-theme.sh" 2>/dev/null || true
 
-# AMP-thema's laden standaard alleen CSS. Voeg daarom één veilige scriptreferentie
-# toe voor de live CPU-, RAM- en Users-balken. De installer voorkomt duplicaten.
+# AMP-thema's laden standaard alleen CSS. Voeg daarom één scriptreferentie toe.
+# De versiewaarde wordt per release verhoogd zodat de browser nooit oude JS houdt.
 if [[ -f "$AMP_HTML" ]]; then
     if grep -q '/Themes/AMPThemes/MemoNetwork/MemoNetwork.js' "$AMP_HTML"; then
-        sed -Ei 's#<script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork\.js[^\"]*"></script>#<script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=451"></script>#' "$AMP_HTML"
+        sed -Ei "s#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork\\.js[^\"]*\"></script>#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>#" "$AMP_HTML"
     else
         HTML_BACKUP="${AMP_HTML}.memonetwork-backup-$(date +%Y%m%d-%H%M%S)"
         echo "AMP.html back-up maken: $HTML_BACKUP"
@@ -64,5 +65,5 @@ if [[ -f "$AMP_HTML" ]]; then
 fi
 
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
-echo "Live metricbalken zijn ingeschakeld."
+echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
 echo "Vernieuw AMP met Ctrl+Shift+R."

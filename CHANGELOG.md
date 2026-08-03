@@ -2,6 +2,28 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.1.0] - 2026-08-03
+
+### Toegevoegd
+
+- Premium styling voor de `Local Instances`-header.
+- Modernere zoek- en filtervelden.
+- Vernieuwde quick-actionknoppen en view-selectors.
+- Subtiele hoverbeweging voor instancekaarten.
+- Duidelijkere statusaccenten voor Running, Busy en Failed.
+- Decoratieve metricbalken onder CPU, Memory en Users.
+- Verfijnde Create Instance-kaart.
+
+### Beperkingen
+
+- De metricbalken zijn decoratief omdat AMP geen ruwe percentages aan CSS doorgeeft.
+- Automatische Fabric/Forge/Paper-badges zijn zonder extra JavaScript of AMP-data niet betrouwbaar mogelijk.
+
+### Veiligheid
+
+- Geen wijzigingen aan AMP JavaScript of backend.
+- Geen vaste layout-offsets of sidebarbreedtes toegevoegd.
+
 ## [4.0.0] - 2026-08-02
 
 ### Toegevoegd

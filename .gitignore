@@ -1,0 +1,14 @@
+# OS/editor files
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Local test/build output
+dist/
+build/
+*.zip
+
+# Local AMP backups
+*.bak
+MemoNetworkBackups/

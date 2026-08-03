@@ -1,0 +1,83 @@
+/* MemoNetwork Edition v5.0 — Control Panel identity */
+
+#sideMenuContainer,
+#barTop,
+#mainBody,
+.loginPage,
+body {
+  --mn-v5-accent: #20c9ff;
+  --mn-v5-accent-strong: #078fe8;
+}
+
+#sideMenuContainer::after {
+  content: "MemoNetwork Control Panel";
+  display: block;
+  margin: 14px 14px 72px;
+  padding: 10px 12px;
+  color: rgba(137,220,248,.82);
+  background: linear-gradient(145deg, rgba(5,36,58,.74), rgba(3,18,31,.76));
+  border: 1px solid rgba(53,203,255,.14);
+  border-radius: 10px;
+  font-size: 10px;
+  line-height: 1.35;
+  letter-spacing: .08em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+#barTop {
+  background: linear-gradient(90deg, rgba(2,10,18,.98), rgba(4,19,33,.97), rgba(2,10,18,.98)) !important;
+  border-bottom: 1px solid rgba(53,203,255,.18) !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22) !important;
+}
+
+#mainBody::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 82% 8%, rgba(19,133,211,.08), transparent 32%),
+    radial-gradient(circle at 24% 84%, rgba(13,97,172,.055), transparent 34%);
+}
+
+.ServerEntry,
+.settingsGroup,
+.metricPanel,
+.analyticsPanel,
+.scheduleTask,
+#fileManagerList,
+#consoleArea,
+.modalpanel {
+  border-color: rgba(53,203,255,.20) !important;
+}
+
+.bgGreen,
+.statusRunning,
+.ServerEntryStatus.bgGreen {
+  box-shadow: 0 0 16px rgba(39,220,125,.12), inset 0 1px 0 rgba(255,255,255,.035) !important;
+}
+
+.bgRed,
+.statusFailed,
+.ServerEntryStatus.bgRed {
+  box-shadow: 0 0 16px rgba(255,71,104,.10), inset 0 1px 0 rgba(255,255,255,.025) !important;
+}
+
+button:not(.bgRed):not(.bgGreen):hover,
+.iconButton:not(.bgRed):not(.bgGreen):hover {
+  border-color: rgba(91,226,255,.72) !important;
+  box-shadow: 0 0 16px rgba(32,201,255,.10) !important;
+}
+
+#notificationContainer,
+.modalpanel,
+.contextMenu {
+  box-shadow: 0 18px 44px rgba(0,0,0,.42), 0 0 28px rgba(21,151,255,.065) !important;
+}
+
+@media (max-width: 900px) {
+  #sideMenuContainer::after { display: none; }
+}

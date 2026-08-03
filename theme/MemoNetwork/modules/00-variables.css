@@ -1,0 +1,17 @@
+:root {
+  --mn-bg-0:#050910;
+  --mn-bg-1:#08121e;
+  --mn-bg-2:#0b1a29;
+  --mn-panel:rgba(11,22,36,.94);
+  --mn-border:rgba(53,203,255,.20);
+  --mn-border-strong:rgba(53,203,255,.52);
+  --mn-blue:#1597ff;
+  --mn-cyan:#35d8ff;
+  --mn-text:#eef9ff;
+  --mn-muted:#96aabd;
+  --mn-green:#35d07f;
+  --mn-amber:#ffb13b;
+  --mn-red:#ff596b;
+  --mn-radius:12px;
+  --mn-transition:160ms ease;
+}

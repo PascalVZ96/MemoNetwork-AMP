@@ -2,6 +2,23 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.7.0] - 2026-08-03
+
+### Toegevoegd
+
+- Metrics Pro-uitstraling voor Analytics-, chart- en resourcepanelen.
+- Diepere donkere grafiekpanelen met subtiele cyaangloed.
+- Uniforme metrickaarten met duidelijke waarden en een accentlijn.
+- Verfijnde legenda's, tabellen, voortgangsbalken en analytics-controls.
+- Smalle scrollbars voor grafiek- en metricpanelen.
+- Subtiele hoverbeweging met reduced-motion ondersteuning.
+
+### Veiligheid
+
+- Geen AMP JavaScript-, backend- of metricberekeningen gewijzigd.
+- Geen nieuwe meetfuncties toegevoegd.
+- Geen vaste hoofdcontent-offsets, sidebarbreedtes of gridwijzigingen.
+
 ## [4.6.0] - 2026-08-03
 
 ### Toegevoegd

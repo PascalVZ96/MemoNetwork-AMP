@@ -4,7 +4,10 @@ set -euo pipefail
 INSTANCE_NAME="${1:-ADS01}"
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 SOURCE="$REPO_ROOT/theme/MemoNetwork"
-TARGET="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot/Themes/AMPThemes/MemoNetwork"
+WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
+TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
+AMP_HTML="$WEBROOT/AMP.html"
+SCRIPT_TAG='    <script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=451"></script>'
 
 if [[ $EUID -ne 0 ]]; then
     echo "Gebruik: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -27,8 +30,6 @@ if [[ -d "$TARGET" ]]; then
     cp -a "$TARGET" "$BACKUP"
 fi
 
-# Start het buildscript expliciet met Bash. Daardoor werkt de installatie ook
-# wanneer Git het uitvoerbare bestand-bit niet heeft behouden of /home noexec is.
 if [[ -f "$SOURCE/build-theme.sh" ]]; then
     echo "MemoNetwork.css bouwen..."
     bash "$SOURCE/build-theme.sh"
@@ -41,5 +42,27 @@ find "$TARGET" -type d -exec chmod 755 {} \;
 find "$TARGET" -type f -exec chmod 644 {} \;
 chmod 755 "$TARGET/build-theme.sh" 2>/dev/null || true
 
+# AMP-thema's laden standaard alleen CSS. Voeg daarom één veilige scriptreferentie
+# toe voor de live CPU-, RAM- en Users-balken. De installer voorkomt duplicaten.
+if [[ -f "$AMP_HTML" ]]; then
+    if grep -q '/Themes/AMPThemes/MemoNetwork/MemoNetwork.js' "$AMP_HTML"; then
+        sed -Ei 's#<script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork\.js[^\"]*"></script>#<script src="/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=451"></script>#' "$AMP_HTML"
+    else
+        HTML_BACKUP="${AMP_HTML}.memonetwork-backup-$(date +%Y%m%d-%H%M%S)"
+        echo "AMP.html back-up maken: $HTML_BACKUP"
+        cp -a "$AMP_HTML" "$HTML_BACKUP"
+
+        if grep -q '</body>' "$AMP_HTML"; then
+            sed -i "s#</body>#$SCRIPT_TAG\n</body>#" "$AMP_HTML"
+        else
+            printf '\n%s\n' "$SCRIPT_TAG" >> "$AMP_HTML"
+        fi
+    fi
+
+    chown amp:amp "$AMP_HTML"
+    chmod 644 "$AMP_HTML"
+fi
+
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
+echo "Live metricbalken zijn ingeschakeld."
 echo "Vernieuw AMP met Ctrl+Shift+R."

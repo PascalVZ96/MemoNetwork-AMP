@@ -1,4 +1,4 @@
-/* MemoNetwork Edition v4.2
+/* MemoNetwork Edition v4.5
  * Direct browser build. The install script replaces this with a compiled file.
  */
 @import url("modules/00-variables.css");
@@ -10,3 +10,5 @@
 @import url("modules/40-console.css");
 @import url("modules/50-filemanager.css");
 @import url("modules/60-shared-panels.css");
+@import url("modules/65-design-system.css");
+@import url("modules/70-server-control.css");

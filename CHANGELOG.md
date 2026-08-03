@@ -2,6 +2,29 @@
 
 Alle belangrijke wijzigingen aan MemoNetwork AMP Edition worden hier bijgehouden.
 
+## [4.3.0] - 2026-08-03
+
+### Toegevoegd
+
+- Console Pro-uitstraling met diepere terminalachtergrond.
+- Duidelijkere timestamps en bronlabels.
+- Visuele ondersteuning voor door AMP geleverde WARN-, ERROR- en SUCCESS-klassen.
+- Vernieuwde commandregel met cyaankleurige cursor en focusglow.
+- Strakkere console-toolbar en bedieningsknoppen.
+- Aangepaste smalle console-scrollbars.
+- Subtiele markering van logregels bij hover.
+
+### Beperkingen
+
+- Tekstinhoud wordt niet door CSS geanalyseerd. WARN- en ERROR-kleuren verschijnen alleen wanneer AMP of een module daarvoor een herkenbare CSS-klasse levert.
+- Er zijn geen zoekfunctie of nieuwe consoleknoppen toegevoegd, omdat dat AMP JavaScript zou vereisen.
+
+### Veiligheid
+
+- Geen wijzigingen aan AMP JavaScript, backend of consolefunctionaliteit.
+- Geen vaste layout-offsets of afmetingen toegevoegd.
+- Animaties worden uitgeschakeld wanneer `prefers-reduced-motion` actief is.
+
 ## [4.2.0] - 2026-08-03
 
 ### Toegevoegd

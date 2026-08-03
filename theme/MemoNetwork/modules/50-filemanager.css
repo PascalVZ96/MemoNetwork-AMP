@@ -1,1 +1,227 @@
-#fileManagerHeader{background:linear-gradient(145deg,rgba(6,19,32,.96),rgba(4,14,25,.98))!important;border:1px solid rgba(53,203,255,.16)!important;border-radius:11px!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.018),0 8px 22px rgba(0,0,0,.20)!important}#fileManagerHeader .fmPathSegment{color:#dff5ff!important;background:linear-gradient(145deg,rgba(7,45,72,.92),rgba(4,28,49,.94))!important;border-color:rgba(53,203,255,.18)!important}#fileManagerHeader .fmPathSegment:hover{color:#fff!important;filter:brightness(1.16);background:linear-gradient(145deg,rgba(12,100,153,.96),rgba(6,62,103,.96))!important}#fileManagerList{background:linear-gradient(180deg,rgba(3,11,20,.96),rgba(2,8,15,.98))!important;border:1px solid rgba(53,203,255,.15)!important;border-radius:11px!important;overflow:hidden!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.015),0 10px 26px rgba(0,0,0,.22)!important}#fileManagerList .fileManagerEntry{border-bottom:1px solid rgba(74,119,150,.08)!important}#fileManagerList .fileManagerEntry:hover{color:#effaff!important;background:linear-gradient(90deg,rgba(16,112,171,.18),rgba(53,216,255,.04))!important}#fileManagerList .fileManagerEntry.selected{color:#fff!important;background:linear-gradient(90deg,rgba(12,113,181,.32),rgba(40,197,239,.10))!important;box-shadow:inset 3px 0 0 var(--mn-cyan)}#fileManagerList .fmIsDirectory .fmMainIcon,#fileManagerInfo .fmInfoIcon.fmIsDirectory{color:#36d9ff!important;filter:drop-shadow(0 0 7px rgba(53,216,255,.13))}#fileManagerInfo{background:linear-gradient(145deg,rgba(7,19,32,.97),rgba(4,13,23,.98))!important;border:1px solid rgba(53,203,255,.15)!important;border-radius:11px!important}
+/* MemoNetwork Edition v4.4 — File Manager Pro */
+
+#fileManagerHeader,
+.fileManagerHeader {
+    position: relative;
+    background:
+        radial-gradient(circle at 88% 0%, rgba(53,216,255,.09), transparent 34%),
+        linear-gradient(145deg,rgba(6,19,32,.97),rgba(4,14,25,.99)) !important;
+    border: 1px solid rgba(53,203,255,.19) !important;
+    border-radius: 12px !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.022),
+        0 10px 25px rgba(0,0,0,.23) !important;
+}
+
+#fileManagerHeader .fmPathSegment,
+.fileManagerHeader .fmPathSegment,
+.fmPathSegment {
+    color: #dff5ff !important;
+    background: linear-gradient(145deg,rgba(7,45,72,.94),rgba(4,28,49,.96)) !important;
+    border: 1px solid rgba(53,203,255,.20) !important;
+    border-radius: 8px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.02) !important;
+    transition: filter .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+}
+
+#fileManagerHeader .fmPathSegment:hover,
+.fileManagerHeader .fmPathSegment:hover,
+.fmPathSegment:hover {
+    color: #fff !important;
+    filter: brightness(1.15);
+    border-color: rgba(96,225,255,.62) !important;
+    background: linear-gradient(145deg,rgba(12,100,153,.98),rgba(6,62,103,.98)) !important;
+    box-shadow: 0 0 14px rgba(53,216,255,.08) !important;
+}
+
+#fileManagerHeader button,
+.fileManagerHeader button,
+.fileManagerToolbar button {
+    border-radius: 8px !important;
+    border-color: rgba(53,203,255,.28) !important;
+    background: linear-gradient(145deg,rgba(7,48,78,.96),rgba(3,27,47,.98)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.025), 0 4px 11px rgba(0,0,0,.18) !important;
+}
+
+#fileManagerHeader button:hover,
+.fileManagerHeader button:hover,
+.fileManagerToolbar button:hover {
+    border-color: rgba(94,227,255,.74) !important;
+    filter: brightness(1.15);
+    box-shadow: 0 0 15px rgba(53,216,255,.10) !important;
+}
+
+#fileManagerList,
+.fileManagerList {
+    background:
+        radial-gradient(circle at 92% 0%,rgba(20,130,205,.045),transparent 32%),
+        linear-gradient(180deg,rgba(3,11,20,.97),rgba(2,8,15,.99)) !important;
+    border: 1px solid rgba(53,203,255,.17) !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.016),
+        0 12px 29px rgba(0,0,0,.24) !important;
+}
+
+#fileManagerList .fileManagerEntry,
+.fileManagerList .fileManagerEntry,
+.fileManagerEntry {
+    min-height: 42px;
+    border-bottom: 1px solid rgba(74,119,150,.085) !important;
+    transition: background-color .14s ease, box-shadow .14s ease, transform .14s ease !important;
+}
+
+#fileManagerList .fileManagerEntry:nth-child(even),
+.fileManagerList .fileManagerEntry:nth-child(even) {
+    background-color: rgba(13,38,57,.055) !important;
+}
+
+#fileManagerList .fileManagerEntry:hover,
+.fileManagerList .fileManagerEntry:hover,
+.fileManagerEntry:hover {
+    color: #effaff !important;
+    background: linear-gradient(90deg,rgba(16,112,171,.20),rgba(53,216,255,.045)) !important;
+    box-shadow: inset 3px 0 0 rgba(53,216,255,.52) !important;
+}
+
+#fileManagerList .fileManagerEntry.selected,
+.fileManagerList .fileManagerEntry.selected,
+.fileManagerEntry.selected {
+    color: #fff !important;
+    background: linear-gradient(90deg,rgba(12,113,181,.36),rgba(40,197,239,.12)) !important;
+    box-shadow:
+        inset 3px 0 0 var(--mn-cyan),
+        inset 0 0 22px rgba(53,216,255,.035) !important;
+}
+
+.fileManagerEntry .fmFilename,
+.fileManagerEntry .filename,
+.fileManagerEntry [data-bind*="Filename"],
+.fileManagerEntry [data-bind*="filename"] {
+    color: #eaf7fd !important;
+    font-weight: 560 !important;
+}
+
+.fileManagerEntry .fmFileSize,
+.fileManagerEntry .fmModified,
+.fileManagerEntry .fileSize,
+.fileManagerEntry .modified {
+    color: rgba(170,199,216,.72) !important;
+    font-family: "Cascadia Mono","Consolas",monospace !important;
+}
+
+#fileManagerList .fmIsDirectory .fmMainIcon,
+.fileManagerList .fmIsDirectory .fmMainIcon,
+#fileManagerInfo .fmInfoIcon.fmIsDirectory {
+    color: #36d9ff !important;
+    filter: drop-shadow(0 0 8px rgba(53,216,255,.16));
+}
+
+#fileManagerList .fmIsArchive .fmMainIcon,
+.fileManagerList .fmIsArchive .fmMainIcon,
+#fileManagerInfo .fmInfoIcon.fmIsArchive {
+    color: #82bfff !important;
+}
+
+#fileManagerList .fmIsVirtual .fmMainIcon,
+.fileManagerList .fmIsVirtual .fmMainIcon,
+#fileManagerInfo .fmInfoIcon.fmIsVirtual {
+    color: #b4e9ff !important;
+}
+
+#fileManagerInfo,
+.fileManagerInfo {
+    background:
+        radial-gradient(circle at 80% 0%,rgba(53,216,255,.055),transparent 38%),
+        linear-gradient(145deg,rgba(7,19,32,.98),rgba(4,13,23,.99)) !important;
+    border: 1px solid rgba(53,203,255,.17) !important;
+    border-radius: 12px !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.018), 0 10px 25px rgba(0,0,0,.21) !important;
+}
+
+#fileManagerInfo h2,
+#fileManagerInfo h3,
+.fileManagerInfo h2,
+.fileManagerInfo h3 {
+    color: #f1fbff !important;
+}
+
+.fileManagerUpload,
+#fileManagerUpload,
+.uploadDropZone,
+.fileUploadDropZone {
+    border: 1px dashed rgba(53,216,255,.45) !important;
+    border-radius: 12px !important;
+    background: linear-gradient(145deg,rgba(7,41,66,.32),rgba(3,19,34,.42)) !important;
+    box-shadow: inset 0 0 24px rgba(53,216,255,.025) !important;
+}
+
+.fileManagerUpload:hover,
+#fileManagerUpload:hover,
+.uploadDropZone:hover,
+.fileUploadDropZone:hover {
+    border-color: rgba(102,231,255,.78) !important;
+    background: linear-gradient(145deg,rgba(9,67,103,.40),rgba(4,31,52,.50)) !important;
+}
+
+.uploadProgress,
+.fileUploadProgress,
+progress {
+    overflow: hidden;
+    border-radius: 999px !important;
+    background: rgba(5,19,31,.92) !important;
+}
+
+.uploadProgress > div,
+.fileUploadProgress > div,
+progress::-webkit-progress-value {
+    background: linear-gradient(90deg,#128cff,#35d8ff) !important;
+    box-shadow: 0 0 12px rgba(53,216,255,.18);
+}
+
+.contextMenu,
+.fileManagerContextMenu {
+    padding: 6px !important;
+    border: 1px solid rgba(53,203,255,.20) !important;
+    border-radius: 11px !important;
+    background: linear-gradient(145deg,rgba(6,18,31,.99),rgba(3,11,20,.995)) !important;
+    box-shadow: 0 16px 38px rgba(0,0,0,.40),0 0 22px rgba(21,151,255,.06) !important;
+}
+
+.contextMenu button,
+.contextMenu .button,
+.fileManagerContextMenu button {
+    border-radius: 7px !important;
+}
+
+.contextMenu button:hover,
+.contextMenu .button:hover,
+.fileManagerContextMenu button:hover {
+    background: linear-gradient(90deg,rgba(20,125,188,.22),rgba(53,216,255,.06)) !important;
+}
+
+#fileManagerList::-webkit-scrollbar,
+.fileManagerList::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+#fileManagerList::-webkit-scrollbar-track,
+.fileManagerList::-webkit-scrollbar-track {
+    background: rgba(2,9,16,.78);
+}
+
+#fileManagerList::-webkit-scrollbar-thumb,
+.fileManagerList::-webkit-scrollbar-thumb {
+    border: 2px solid rgba(2,9,16,.78);
+    border-radius: 999px;
+    background: linear-gradient(180deg,rgba(20,132,194,.78),rgba(8,71,116,.88));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fileManagerEntry,
+    .fmPathSegment {
+        transition: none !important;
+    }
+}

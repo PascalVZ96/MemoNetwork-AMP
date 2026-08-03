@@ -1,62 +1,182 @@
-# MemoNetwork AMP Edition
+# 🚀 MemoNetwork AMP Edition
 
-Een custom donkerblauw/cyaan thema voor **CubeCoders AMP**, gemaakt voor persoonlijk serverbeheer.
+A modern, premium theme for **CubeCoders AMP** focused on a clean interface, responsive layouts and an improved server management experience.
 
-## Huidige stabiele versie
+![Version](https://img.shields.io/badge/Version-v5.0.2-blue)
+![Status](https://img.shields.io/badge/Status-Stable-brightgreen)
+![AMP](https://img.shields.io/badge/AMP-v2.8-orange)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
-**v4.0.0**
+---
 
-Deze versie bevat onder andere:
+# ✨ Features
 
-- MemoNetwork-loginpagina en branding;
-- eigen logo en netwerkachtergrond;
-- premium instancekaarten;
-- vernieuwde Console;
-- vernieuwde File Manager;
-- aangepaste tabbladen, tabellen, meldingen en panelen;
-- modulaire CSS-opbouw;
-- geen wijzigingen aan de AMP-backend of JavaScript.
+## 🎨 Premium Interface
 
-## Installeren
+- Modern MemoNetwork styling
+- Redesigned cards
+- Consistent spacing
+- Smooth animations
+- Improved typography
+- Premium buttons
 
-Kopieer de map `theme/MemoNetwork` naar:
+---
 
-```text
-/home/amp/.ampdata/instances/ADS01/WebRoot/Themes/AMPThemes/MemoNetwork
-```
+## 📱 Responsive
 
-Zet daarna de rechten goed:
+Optimized for
+
+- Desktop
+- Laptop
+- Tablet
+- Mobile
+
+Including:
+
+- Responsive Desktop Drawer
+- Mobile Navigation
+- Adaptive Layout
+- Improved Sidebar
+
+---
+
+## 📊 Live Metrics
+
+Live widgets for
+
+- CPU Usage
+- Memory Usage
+- Online Players
+
+Including animated progress bars.
+
+---
+
+## ⚡ Improved User Experience
+
+- Better Status Badges
+- Improved Toolbars
+- Cleaner Forms
+- Better Tables
+- Better Hover Effects
+- Better Focus States
+
+---
+
+## 🐧 Extra
+
+- Linux Mascot
+- MemoNetwork Branding
+- Responsive Navigation
+- Improved Installer
+- Automatic CSS Build
+- JavaScript Module Support
+
+---
+
+# 📷 Screenshots
+
+Desktop
+
+*(Coming soon)*
+
+Tablet
+
+*(Coming soon)*
+
+Mobile
+
+*(Coming soon)*
+
+---
+
+# 🚀 Installation
+
+Clone the repository
 
 ```bash
-sudo chown -R amp:amp /home/amp/.ampdata/instances/ADS01/WebRoot/Themes/AMPThemes/MemoNetwork
-sudo find /home/amp/.ampdata/instances/ADS01/WebRoot/Themes/AMPThemes/MemoNetwork -type d -exec chmod 755 {} \;
-sudo find /home/amp/.ampdata/instances/ADS01/WebRoot/Themes/AMPThemes/MemoNetwork -type f -exec chmod 644 {} \;
+git clone https://github.com/PascalVZ96/MemoNetwork-AMP
 ```
 
-Vernieuw AMP daarna met `Ctrl + Shift + R`.
-
-## Thema opnieuw bouwen
-
-Na wijzigingen aan bestanden in `theme/MemoNetwork/modules/`:
+Go into the repository
 
 ```bash
-cd theme/MemoNetwork
-./build-theme.sh
+cd MemoNetwork-AMP
 ```
 
-## Belangrijke veiligheidsregel
+Install
 
-Voeg geen vaste breedtes, `left`, `margin-left` of positioneringsregels toe aan:
-
-```text
-#mainBody
-#barTop
-#sideMenuContainer
-.subMenuWell
+```bash
+sudo bash ./scripts/install.sh ADS01
 ```
 
-AMP berekent deze onderdelen dynamisch. Eerdere experimenten hiermee veroorzaakten verschoven content en kapotte submenu's.
+Refresh AMP
 
-## Credits
+```
+Ctrl + Shift + R
+```
 
-MemoNetwork Edition is een visueel thema voor CubeCoders AMP. CubeCoders-auteursrecht en AMP-release-informatie blijven zichtbaar.
+---
+
+# ✅ Current Stable Version
+
+# v5.0.2 Stable
+
+Latest improvements
+
+- Premium Dashboard
+- Responsive Desktop Drawer
+- Mobile Improvements
+- Live Metrics
+- Premium Buttons
+- Responsive Sidebar
+- Better Menu
+- Responsive Cards
+- Better Progress Bars
+- JavaScript Improvements
+- Performance Improvements
+- Multiple UI Fixes
+
+---
+
+# 🛣 Roadmap
+
+## Version 6
+
+Planned features
+
+- Live Console Preview
+- Minecraft Player Avatars
+- TPS Widget
+- Backup Status Widget
+- Better Graphs
+- Notification Center
+- Discord Integration
+- Plugin Marketplace
+- Mobile Companion App
+
+---
+
+# 🤝 Contributing
+
+Suggestions and improvements are always welcome.
+
+Feel free to open an Issue or Pull Request.
+
+---
+
+# ❤️ Credits
+
+Created by
+
+**PascalVZ**
+
+UI Design & Development
+
+Together with ChatGPT
+
+---
+
+# ⭐ Support
+
+If you like this project, consider giving it a ⭐ on GitHub.

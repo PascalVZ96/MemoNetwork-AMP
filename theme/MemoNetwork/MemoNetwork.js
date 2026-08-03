@@ -40,6 +40,32 @@
 
   const drawerMedia = window.matchMedia('(min-width: 701px) and (max-width: 1180px)');
 
+  const markDrawerChrome = () => {
+    const menu = document.querySelector('#sideMenuContainer');
+    if (!menu) return;
+
+    menu.querySelectorAll('img').forEach((image) => {
+      const src = image.getAttribute('src') ?? '';
+      if (/FullLogo|MemoNetwork/i.test(src)) {
+        image.classList.add('mn-drawer-hide');
+        const parent = image.parentElement;
+        if (parent && parent.children.length === 1) parent.classList.add('mn-drawer-hide');
+      }
+    });
+
+    const footerPattern = /MemoNetwork Edition|AMP Release|built\s+\d|v2\.8/i;
+    menu.querySelectorAll('*').forEach((element) => {
+      const text = element.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+      if (!text || !footerPattern.test(text)) return;
+
+      const matchingChild = Array.from(element.children).some((child) =>
+        footerPattern.test(child.textContent?.replace(/\s+/g, ' ').trim() ?? '')
+      );
+
+      if (!matchingChild) element.classList.add('mn-drawer-hide');
+    });
+  };
+
   const closeDrawer = () => {
     document.body.classList.remove('mn-drawer-open');
     document.getElementById('mn-desktop-drawer-toggle')?.setAttribute('aria-expanded', 'false');
@@ -86,6 +112,8 @@
         if (drawerMedia.matches && event.target.closest('a, button, .sideMenuItem')) closeDrawer();
       });
     }
+
+    markDrawerChrome();
   };
 
   let queued = false;

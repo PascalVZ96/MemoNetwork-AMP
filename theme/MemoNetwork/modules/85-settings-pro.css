@@ -1,0 +1,110 @@
+/* MemoNetwork Edition v4.8 — Settings Pro */
+
+.settingsGroup,
+.settingContainer,
+#settingsContainer .well,
+.configGroup,
+.configSection,
+.configurationPanel {
+  background: linear-gradient(145deg, rgba(7,20,34,.97), rgba(3,12,22,.98)) !important;
+  border: 1px solid rgba(53,203,255,.16) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.018), 0 10px 26px rgba(0,0,0,.22) !important;
+}
+
+.settingsGroup > h2,
+.settingsGroup > h3,
+.settingsGroup .groupHeader,
+.configGroup > h2,
+.configGroup > h3 {
+  color: #f1fbff !important;
+  background: linear-gradient(90deg, rgba(10,83,130,.45), rgba(6,35,61,.14)) !important;
+  border-bottom: 1px solid rgba(53,203,255,.14) !important;
+  border-radius: 11px 11px 0 0 !important;
+  padding: 12px 14px !important;
+}
+
+.settingContainer {
+  transition: border-color .18s ease, background-color .18s ease, transform .18s ease !important;
+}
+
+.settingContainer:hover {
+  border-color: rgba(53,216,255,.32) !important;
+  background: linear-gradient(145deg, rgba(8,30,49,.98), rgba(4,17,30,.98)) !important;
+}
+
+.settingContainer label,
+.settingsGroup label,
+.configSection label {
+  color: #dcebf4 !important;
+  font-weight: 600 !important;
+}
+
+.settingContainer .description,
+.settingContainer .settingDescription,
+.settingsGroup small,
+.configSection small {
+  color: rgba(177,202,217,.72) !important;
+}
+
+.settingContainer input,
+.settingContainer select,
+.settingContainer textarea,
+.settingsGroup input,
+.settingsGroup select,
+.settingsGroup textarea,
+.configSection input,
+.configSection select,
+.configSection textarea {
+  color: #eefaff !important;
+  background: linear-gradient(145deg, rgba(3,15,27,.98), rgba(2,10,19,.98)) !important;
+  border: 1px solid rgba(53,203,255,.22) !important;
+  border-radius: 9px !important;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.30) !important;
+}
+
+.settingContainer input:focus,
+.settingContainer select:focus,
+.settingContainer textarea:focus,
+.settingsGroup input:focus,
+.settingsGroup select:focus,
+.settingsGroup textarea:focus,
+.configSection input:focus,
+.configSection select:focus,
+.configSection textarea:focus {
+  border-color: rgba(53,216,255,.72) !important;
+  box-shadow: 0 0 0 3px rgba(53,216,255,.08), 0 0 16px rgba(21,151,255,.08) !important;
+  outline: none !important;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: #21c8ff;
+}
+
+.toggleSwitch,
+.switch,
+.material-switch {
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.18));
+}
+
+.settingsGroup button,
+.configSection button,
+.configurationPanel button {
+  border-radius: 9px !important;
+  transition: transform .16s ease, filter .16s ease, box-shadow .16s ease !important;
+}
+
+.settingsGroup button:hover,
+.configSection button:hover,
+.configurationPanel button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settingContainer,
+  .settingsGroup button,
+  .configSection button,
+  .configurationPanel button { transition: none !important; }
+}

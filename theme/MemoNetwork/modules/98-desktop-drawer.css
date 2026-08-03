@@ -39,6 +39,17 @@
     height: auto !important;
   }
 
+  #sideMenuContainer .mn-drawer-hide,
+  #sideMenuContainer img[src*="FullLogo"],
+  #sideMenuContainer img[src*="MemoNetwork"],
+  #sideMenuContainer footer,
+  #sideMenuContainer .footer,
+  #sideMenuContainer .sideMenuFooter,
+  #sideMenuContainer .releaseInfo,
+  #sideMenuContainer .versionInfo {
+    display: none !important;
+  }
+
   #mainBody,
   #barTop {
     margin-left: 0 !important;

@@ -1,9 +1,9 @@
 {
   "Name": "MemoNetwork",
-  "Version": "4.9.0",
+  "Version": "5.0.0",
   "UpdatedDate": "2026/08/03",
-  "Description": "MemoNetwork Edition v4.9 with final UI polish, accessibility and responsive refinements",
+  "Description": "MemoNetwork Control Panel v5.0 with unified branding, Settings Pro and final UI polish",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
-  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular"]
+  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel"]
 }

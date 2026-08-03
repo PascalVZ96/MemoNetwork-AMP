@@ -39,6 +39,56 @@
     root.querySelectorAll?.('.ServerEntryMetric').forEach(updateMetric);
   };
 
+  const drawerMedia = window.matchMedia('(min-width: 701px) and (max-width: 1180px)');
+
+  const closeDrawer = () => {
+    document.body.classList.remove('mn-drawer-open');
+    document.getElementById('mn-desktop-drawer-toggle')?.setAttribute('aria-expanded', 'false');
+  };
+
+  const setupDesktopDrawer = () => {
+    let toggle = document.getElementById('mn-desktop-drawer-toggle');
+    let backdrop = document.getElementById('mn-drawer-backdrop');
+
+    if (!toggle) {
+      toggle = document.createElement('button');
+      toggle.id = 'mn-desktop-drawer-toggle';
+      toggle.type = 'button';
+      toggle.textContent = '☰';
+      toggle.title = 'Menu';
+      toggle.setAttribute('aria-label', 'Menu openen');
+      toggle.setAttribute('aria-expanded', 'false');
+
+      const topBar = document.querySelector('#barTop');
+      if (topBar) topBar.prepend(toggle);
+    }
+
+    if (!backdrop) {
+      backdrop = document.createElement('div');
+      backdrop.id = 'mn-drawer-backdrop';
+      document.body.append(backdrop);
+    }
+
+    toggle?.addEventListener('click', () => {
+      const open = document.body.classList.toggle('mn-drawer-open');
+      toggle.setAttribute('aria-expanded', String(open));
+    });
+
+    backdrop?.addEventListener('click', closeDrawer);
+
+    document.querySelector('#sideMenuContainer')?.addEventListener('click', (event) => {
+      if (drawerMedia.matches && event.target.closest('a, button, .sideMenuItem')) closeDrawer();
+    });
+
+    drawerMedia.addEventListener?.('change', () => {
+      if (!drawerMedia.matches) closeDrawer();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeDrawer();
+    });
+  };
+
   let queued = false;
   const queueUpdate = () => {
     if (queued) return;
@@ -51,6 +101,7 @@
 
   const start = () => {
     updateAll();
+    setupDesktopDrawer();
 
     const observer = new MutationObserver(queueUpdate);
     observer.observe(document.body, {

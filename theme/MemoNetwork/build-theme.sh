@@ -22,10 +22,11 @@ MODULES=(
   "85-settings-pro.css"
   "90-ui-polish.css"
   "95-v5-branding.css"
+  "99-responsive-fix.css"
 )
 
 {
-  echo '/* MemoNetwork Edition v5.0 - generated file */'
+  echo '/* MemoNetwork Edition v5.0.1 - generated file */'
   for module in "${MODULES[@]}"; do
     echo
     echo "/* ===== $module ===== */"

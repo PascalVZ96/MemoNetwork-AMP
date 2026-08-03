@@ -1,0 +1,167 @@
+/* MemoNetwork Edition v4.1 — Premium Instances dashboard
+ * Visual-only: no fixed sidebar widths, content offsets or AMP JavaScript changes.
+ */
+
+/* Search and filter fields */
+#topSearchBox input.searchBox,
+.ServerGroupContainer input[type="text"],
+.ServerGroupContainer input[type="search"] {
+    color: #eefaff !important;
+    background: linear-gradient(145deg, rgba(3, 12, 22, .97), rgba(4, 18, 31, .96)) !important;
+    border: 1px solid rgba(53, 203, 255, .24) !important;
+    border-radius: 11px !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .35), 0 6px 18px rgba(0, 0, 0, .12) !important;
+    transition: border-color .16s ease, box-shadow .16s ease, background-color .16s ease !important;
+}
+
+#topSearchBox input.searchBox:focus,
+.ServerGroupContainer input[type="text"]:focus,
+.ServerGroupContainer input[type="search"]:focus {
+    border-color: rgba(53, 216, 255, .68) !important;
+    box-shadow: 0 0 0 3px rgba(53, 216, 255, .08), 0 0 20px rgba(21, 151, 255, .09) !important;
+}
+
+/* Premium Local Instances header */
+.ServerGroupHeader {
+    background:
+        radial-gradient(circle at 92% 0%, rgba(91, 225, 255, .19), transparent 31%),
+        linear-gradient(135deg, rgba(7, 72, 119, .98), rgba(10, 143, 204, .93)) !important;
+    border-color: rgba(82, 218, 255, .42) !important;
+    box-shadow: 0 13px 32px rgba(0, 0, 0, .25), inset 0 1px 0 rgba(255, 255, 255, .055) !important;
+}
+
+.ServerGroupHeader h2,
+.ServerGroupHeader h3,
+.ServerGroupHeader .ServerGroupName {
+    color: #fff !important;
+    font-weight: 800 !important;
+    letter-spacing: -.022em !important;
+    text-shadow: 0 2px 9px rgba(0, 0, 0, .35) !important;
+}
+
+.ServerGroupHeader small,
+.ServerGroupHeader .ServerGroupInfo {
+    color: rgba(218, 242, 252, .80) !important;
+}
+
+/* Quick actions */
+.ServerGroupHeader button,
+.ServerGroupHeader .button {
+    color: #f7fcff !important;
+    background: linear-gradient(145deg, rgba(7, 87, 141, .96), rgba(4, 55, 95, .96)) !important;
+    border: 1px solid rgba(81, 217, 255, .52) !important;
+    border-radius: 9px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .04), 0 5px 14px rgba(0, 0, 0, .15) !important;
+    transition: filter .16s ease, border-color .16s ease, box-shadow .16s ease !important;
+}
+
+.ServerGroupHeader button:hover,
+.ServerGroupHeader .button:hover {
+    filter: brightness(1.14);
+    border-color: rgba(112, 230, 255, .90) !important;
+    box-shadow: 0 0 16px rgba(46, 192, 255, .14), inset 0 1px 0 rgba(255, 255, 255, .05) !important;
+}
+
+.ServerGroupHeader button.bgGreen,
+.ServerGroupHeader .button.bgGreen {
+    background: linear-gradient(145deg, rgba(13, 122, 69, .97), rgba(7, 77, 46, .97)) !important;
+    border-color: rgba(72, 232, 139, .88) !important;
+}
+
+.ServerGroupHeader button.bgRed,
+.ServerGroupHeader .button.bgRed {
+    background: linear-gradient(145deg, rgba(127, 27, 45, .97), rgba(75, 14, 28, .97)) !important;
+    border-color: rgba(255, 97, 118, .88) !important;
+}
+
+/* View mode buttons */
+.ServerGroupContainer .buttonStrip button,
+.ServerGroupContainer .viewMode button,
+.ServerGroupContainer .viewButtons button {
+    color: #effaff !important;
+    background: linear-gradient(145deg, rgba(5, 40, 68, .96), rgba(3, 24, 43, .97)) !important;
+    border: 1px solid rgba(53, 203, 255, .40) !important;
+    border-radius: 9px !important;
+}
+
+.ServerGroupContainer .buttonStrip button:hover,
+.ServerGroupContainer .viewMode button:hover,
+.ServerGroupContainer .viewButtons button:hover {
+    filter: brightness(1.14);
+    border-color: rgba(100, 226, 255, .86) !important;
+}
+
+/* Refined card hover. Transform is intentionally tiny and visual only. */
+.InstanceList .ServerEntry {
+    transition: transform .17s ease, border-color .17s ease, box-shadow .17s ease !important;
+}
+
+.InstanceList .ServerEntry:not(.NewServerEntry):hover {
+    transform: translateY(-2px);
+}
+
+/* Better visual distinction for known AMP state classes */
+.InstanceList .ServerEntry.statusRunning {
+    border-left-color: rgba(54, 224, 127, .95) !important;
+}
+
+.InstanceList .ServerEntry.statusBusy,
+.InstanceList .ServerEntry.busy {
+    border-left-color: rgba(255, 178, 61, .95) !important;
+}
+
+.InstanceList .ServerEntry.statusFail {
+    border-left-color: rgba(255, 89, 107, .95) !important;
+}
+
+/* Metric bars remain decorative: AMP does not expose raw values to CSS. */
+.ServerEntryMetric {
+    position: relative;
+    overflow: hidden;
+    padding-bottom: 12px !important;
+}
+
+.ServerEntryMetric::before {
+    content: "";
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    bottom: 5px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgba(107, 150, 178, .14);
+}
+
+.ServerEntryMetric::after {
+    content: "";
+    position: absolute;
+    left: 10px;
+    bottom: 5px;
+    width: 31%;
+    height: 3px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, #128cff, #35d8ff);
+    box-shadow: 0 0 8px rgba(53, 216, 255, .19);
+}
+
+.ServerEntryMetric:nth-child(1)::after { width: 24%; }
+.ServerEntryMetric:nth-child(2)::after { width: 45%; }
+.ServerEntryMetric:nth-child(3)::after { width: 30%; }
+
+/* Create Instance call-to-action */
+.InstanceList .ServerEntry.NewServerEntry {
+    background:
+        radial-gradient(circle at 50% 43%, rgba(27, 172, 255, .21), transparent 35%),
+        linear-gradient(145deg, rgba(7, 24, 41, .99), rgba(4, 14, 25, .99)) !important;
+    border-color: rgba(69, 219, 255, .54) !important;
+}
+
+.InstanceList .ServerEntry.NewServerEntry:hover {
+    border-color: rgba(98, 232, 255, .88) !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, .31), 0 0 28px rgba(21, 151, 255, .12) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .InstanceList .ServerEntry { transition: none !important; }
+    .InstanceList .ServerEntry:not(.NewServerEntry):hover { transform: none !important; }
+}

@@ -1,4 +1,4 @@
-/* MemoNetwork Edition v4.8
+/* MemoNetwork Edition v4.9
  * Direct browser build. The install script replaces this with a compiled file.
  */
 @import url("modules/00-variables.css");
@@ -16,3 +16,4 @@
 @import url("modules/75-scheduler-pro.css");
 @import url("modules/80-metrics-pro.css");
 @import url("modules/85-settings-pro.css");
+@import url("modules/90-ui-polish.css");

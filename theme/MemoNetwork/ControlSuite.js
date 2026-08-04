@@ -1,11 +1,12 @@
 (() => {
   'use strict';
 
-  const FAVORITES_KEY = 'memonetwork-v6-favorites-v4';
+  const FAVORITES_KEY = 'memonetwork-v6-favorites-v5';
   const OLD_KEYS = [
     'memonetwork-v6-favorites',
     'memonetwork-v6-favorites-v2',
-    'memonetwork-v6-favorites-v3'
+    'memonetwork-v6-favorites-v3',
+    'memonetwork-v6-favorites-v4'
   ];
   const previousStates = new Map();
   let initialized = false;
@@ -28,7 +29,7 @@
     try {
       localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
     } catch {
-      // Local storage may be unavailable in private browser modes.
+      // Local storage may be unavailable.
     }
   };
 
@@ -57,21 +58,31 @@
     window.setTimeout(() => {
       toast.classList.remove('is-visible');
       window.setTimeout(() => toast.remove(), 220);
-    }, 3800);
+    }, 3000);
   };
 
   const toggleFavorite = (row) => {
     if (!row) return;
+
     const key = favoriteKey(row);
     const favorites = readFavorites();
-    const active = favorites.has(key);
+    const wasFavorite = favorites.has(key);
 
-    if (active) favorites.delete(key);
+    if (wasFavorite) favorites.delete(key);
     else favorites.add(key);
 
     saveFavorites(favorites);
     applyFavorites();
-    showToast(rowName(row), active ? 'Verwijderd uit favorieten' : 'Toegevoegd aan favorieten', 'info');
+    showToast(
+      rowName(row),
+      wasFavorite ? 'Verwijderd uit favorieten' : 'Toegevoegd aan favorieten'
+    );
+  };
+
+  const isStarArea = (row, event) => {
+    const rect = row.getBoundingClientRect();
+    const width = window.matchMedia('(max-width: 700px)').matches ? 48 : 40;
+    return event.clientX >= rect.left && event.clientX <= rect.left + width;
   };
 
   const installDelegatedEvents = () => {
@@ -79,23 +90,22 @@
     delegatedEventsInstalled = true;
 
     document.addEventListener('click', (event) => {
-      const toggle = event.target.closest?.('.mn-favorite-toggle');
-      if (!toggle) return;
+      const row = event.target.closest?.('#mn-dashboard-pro .mn-server-row');
+      if (!row || !isStarArea(row, event)) return;
 
       event.preventDefault();
       event.stopPropagation();
       event.stopImmediatePropagation();
-      toggleFavorite(toggle.closest('.mn-server-row'));
+      toggleFavorite(row);
     }, true);
 
     document.addEventListener('keydown', (event) => {
-      const toggle = event.target.closest?.('.mn-favorite-toggle');
-      if (!toggle || (event.key !== 'Enter' && event.key !== ' ')) return;
+      const row = event.target.closest?.('#mn-dashboard-pro .mn-server-row');
+      if (!row || (event.key !== 'f' && event.key !== 'F')) return;
 
       event.preventDefault();
       event.stopPropagation();
-      event.stopImmediatePropagation();
-      toggleFavorite(toggle.closest('.mn-server-row'));
+      toggleFavorite(row);
     }, true);
   };
 
@@ -108,22 +118,21 @@
 
     rows.forEach((row) => {
       const key = favoriteKey(row);
-      let toggle = row.querySelector('.mn-favorite-toggle');
+      let star = row.querySelector('.mn-favorite-toggle');
 
-      if (!toggle) {
-        toggle = document.createElement('span');
-        toggle.className = 'mn-favorite-toggle';
-        toggle.setAttribute('role', 'switch');
-        toggle.setAttribute('tabindex', '0');
-        row.insertBefore(toggle, row.firstChild);
+      if (!star) {
+        star = document.createElement('span');
+        star.className = 'mn-favorite-toggle';
+        star.setAttribute('aria-hidden', 'true');
+        row.insertBefore(star, row.firstChild);
       }
 
       const active = favorites.has(key);
       row.classList.toggle('is-favorite', active);
-      toggle.textContent = active ? '★' : '☆';
-      toggle.title = active ? 'Verwijder uit favorieten' : 'Markeer als favoriet';
-      toggle.setAttribute('aria-label', toggle.title);
-      toggle.setAttribute('aria-checked', String(active));
+      star.textContent = active ? '★' : '☆';
+      row.title = active
+        ? `${rowName(row)} — klik op de ster om uit favorieten te verwijderen`
+        : `${rowName(row)} — klik op de ster om als favoriet te markeren`;
     });
 
     rows
@@ -140,9 +149,14 @@
       const previous = previousStates.get(key);
 
       if (initialized && previous && previous !== state) {
-        const kind = /running/i.test(state) ? 'success' : /offline|waiting|sleep/i.test(state) ? 'warning' : 'info';
+        const kind = /running/i.test(state)
+          ? 'success'
+          : /offline|waiting|sleep/i.test(state)
+            ? 'warning'
+            : 'info';
         showToast(name, `Status gewijzigd naar ${state}`, kind);
       }
+
       previousStates.set(key, state);
     });
     initialized = true;
@@ -177,6 +191,9 @@
     window.setInterval(update, 1500);
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
-  else start();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
 })();

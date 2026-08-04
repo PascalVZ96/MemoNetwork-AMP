@@ -13,6 +13,7 @@ MODULES=(
   "36-dashboard-polish.css"
   "37-dashboard-pro.css"
   "38-control-center-collapse.css"
+  "38b-control-center-states.css"
   "39-live-metrics.css"
   "40-console.css"
   "50-filemanager.css"

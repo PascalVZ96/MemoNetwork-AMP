@@ -1,0 +1,35 @@
+/* MemoNetwork v5.3 — extra Control Center states */
+
+.mn-server-row.is-waiting .mn-server-state,
+.mn-server-row.is-busy .mn-server-state {
+  background: #ffc85d;
+  box-shadow: 0 0 10px rgba(255, 200, 93, .5);
+}
+
+.mn-server-row.is-waiting .mn-server-name strong,
+.mn-server-row.is-busy .mn-server-name strong {
+  color: #ffe0a3;
+}
+
+#mn-dashboard-pro.has-attention .mn-health-dot {
+  background: #ffc85d;
+  box-shadow: 0 0 12px rgba(255, 200, 93, .58);
+}
+
+.mn-server-row-no-metrics {
+  grid-template-columns: auto minmax(135px, 1.2fr) minmax(110px, .8fr) auto !important;
+}
+
+.mn-server-message b {
+  color: #ffe0a3;
+}
+
+@media (max-width: 700px) {
+  .mn-server-row-no-metrics {
+    grid-template-columns: auto minmax(0, 1fr) auto !important;
+  }
+
+  .mn-server-row-no-metrics .mn-server-message {
+    display: none;
+  }
+}

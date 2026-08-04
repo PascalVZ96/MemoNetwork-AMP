@@ -20,10 +20,8 @@
   box-shadow: none !important;
   font-size: 17px;
   line-height: 1;
-  cursor: pointer;
   user-select: none;
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
+  pointer-events: none;
   transition: color .16s ease, transform .16s ease;
 }
 
@@ -33,12 +31,10 @@
   content: none !important;
 }
 
-.mn-favorite-toggle:hover,
-.mn-favorite-toggle:focus-visible,
+.mn-server-row:hover .mn-favorite-toggle,
 .mn-server-row.is-favorite .mn-favorite-toggle {
   color: #ffd86b;
   transform: scale(1.08);
-  outline: none;
 }
 
 .mn-server-row.is-favorite {

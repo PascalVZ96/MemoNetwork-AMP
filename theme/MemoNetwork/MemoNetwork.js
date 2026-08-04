@@ -76,13 +76,11 @@
   });
 
   const ensureDashboard = () => {
-    if (!location.pathname.toLowerCase().includes('/instances')) {
+    const header = document.querySelector('.ServerGroupHeader');
+    if (!header?.parentElement) {
       document.getElementById('mn-dashboard-pro')?.remove();
       return;
     }
-
-    const header = document.querySelector('.ServerGroupHeader');
-    if (!header?.parentElement) return;
 
     let panel = document.getElementById('mn-dashboard-pro');
     if (!panel) panel = createDashboard();
@@ -130,10 +128,11 @@
 
   const ensureFooter = () => {
     const footer = document.getElementById('bgtext');
-    if (!footer || footer.dataset.mnVersion === VERSION) return;
-    footer.className = 'mn-v51-footer';
-    footer.dataset.mnVersion = VERSION;
-    footer.innerHTML = `<strong>MemoNetwork Edition</strong><span>v${VERSION}</span><small>Built ${BUILD}</small>`;
+    if (footer && !footer.querySelector('[data-mn-footer-version]')) {
+      footer.className = 'mn-v51-footer';
+      footer.removeAttribute('data-viewmodel');
+      footer.innerHTML = `<div class="tiny" data-mn-footer-version><strong>v${VERSION}</strong><br><small>Built ${BUILD}</small></div>`;
+    }
 
     Array.from(document.querySelectorAll('button, a, div')).forEach((element) => {
       if (/^MEMONETWORK CONTROL PANEL$/i.test(element.textContent?.trim() ?? '')) {

@@ -49,7 +49,21 @@
     return panel;
   };
 
-  const getEntries = () => Array.from(document.querySelectorAll('.ServerEntry')).filter((entry) =>
+  const findLocalInstancesHeader = () => Array.from(document.querySelectorAll('.ServerGroupHeader')).find((header) => {
+    const name = header.querySelector('.ServerGroupName > span')?.textContent?.trim() ?? '';
+    return name === 'Local Instances' && !header.classList.contains('loadPending');
+  }) ?? null;
+
+  const findLocalInstancesGroup = (header) => {
+    let node = header?.parentElement ?? null;
+    while (node && node !== document.body) {
+      if (node.querySelector('.ServerEntry')) return node;
+      node = node.parentElement;
+    }
+    return null;
+  };
+
+  const getEntries = (root = document) => Array.from(root.querySelectorAll('.ServerEntry')).filter((entry) =>
     entry.querySelector('.ServerEntryMetric') && !/create instance/i.test(entry.textContent ?? '')
   );
 
@@ -64,14 +78,18 @@
   });
 
   const ensureDashboard = () => {
-    const header = document.querySelector('.ServerGroupHeader');
+    const header = findLocalInstancesHeader();
     if (!header) return;
+
+    const stalePanel = document.querySelector('.ServerGroupHeader.loadPending #mn-dashboard-pro');
+    if (stalePanel) stalePanel.remove();
 
     let panel = document.getElementById('mn-dashboard-pro');
     if (!panel) panel = createDashboard();
     if (panel.parentElement !== header) header.appendChild(panel);
 
-    const entries = getEntries();
+    const group = findLocalInstancesGroup(header);
+    const entries = getEntries(group ?? document);
     const active = entries.filter(isRunning);
     let playersUsed = 0;
     let playersTotal = 0;
@@ -120,13 +138,14 @@
       if (footer.innerHTML !== html) footer.innerHTML = html;
     }
 
-    document.querySelectorAll('#sideMenuContainer button, #sideMenuContainer a, #sideMenuContainer div').forEach((element) => {
+    Array.from(document.querySelectorAll('body *')).forEach((element) => {
       const text = element.textContent?.replace(/\s+/g, ' ').trim() ?? '';
       if (text !== 'MEMONETWORK CONTROL PANEL') return;
+      if (Array.from(element.children).some((child) => child.textContent?.replace(/\s+/g, ' ').trim() === text)) return;
 
       const candidate = element.closest('button, a, [role="button"], .slimButton, .button, .Button') ?? element;
       candidate.style.setProperty('display', 'none', 'important');
-      if (candidate.parentElement && candidate.parentElement.textContent?.replace(/\s+/g, ' ').trim() === text) {
+      if (candidate.parentElement?.children.length === 1) {
         candidate.parentElement.style.setProperty('display', 'none', 'important');
       }
     });
@@ -187,9 +206,19 @@
     ensureDesktopDrawer();
   };
 
+  let updateQueued = false;
+  const queueUpdate = () => {
+    if (updateQueued) return;
+    updateQueued = true;
+    requestAnimationFrame(() => {
+      updateQueued = false;
+      update();
+    });
+  };
+
   const start = () => {
     update();
-    const observer = new MutationObserver(() => requestAnimationFrame(update));
+    const observer = new MutationObserver(queueUpdate);
     observer.observe(document.body, { childList: true, subtree: true });
     window.setInterval(update, 1500);
     drawerMedia.addEventListener?.('change', () => {

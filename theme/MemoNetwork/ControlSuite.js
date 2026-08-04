@@ -1,7 +1,7 @@
 (() => {
   'use strict';
 
-  const FAVORITES_KEY = 'memonetwork-v6-favorites';
+  const FAVORITES_KEY = 'memonetwork-v6-favorites-v2';
   const previousStates = new Map();
   let initialized = false;
 
@@ -23,7 +23,6 @@
   };
 
   const normalize = (value) => String(value ?? '').trim().toLocaleLowerCase('nl-NL');
-
   const rowName = (row) => row.querySelector('.mn-server-name strong')?.textContent?.trim() || 'Server';
   const rowState = (row) => row.querySelector('.mn-server-name small')?.textContent?.trim() || 'Onbekend';
 
@@ -31,9 +30,19 @@
     !/create instance/i.test(entry.textContent ?? '')
   );
 
-  const findCardForRow = (row, cards) => {
-    const name = normalize(rowName(row).replace(/\s+\d+$/, ''));
-    return cards.find((card) => normalize(card.textContent).includes(name)) ?? null;
+  const assignRowKeys = (rows) => {
+    const counts = new Map();
+    rows.forEach((row) => {
+      const base = normalize(rowName(row).replace(/\s+\d+$/, '')) || 'server';
+      const occurrence = (counts.get(base) ?? 0) + 1;
+      counts.set(base, occurrence);
+      row.dataset.mnFavoriteKey = `${base}::${occurrence}`;
+    });
+  };
+
+  const findCardForRow = (row, rows, cards) => {
+    const index = rows.indexOf(row);
+    return index >= 0 ? cards[index] ?? null : null;
   };
 
   const showToast = (title, message, kind = 'info') => {
@@ -64,7 +73,7 @@
     rows.forEach((row) => {
       const visible = !normalized || normalize(row.textContent).includes(normalized);
       row.classList.toggle('mn-v6-filtered', !visible);
-      const card = findCardForRow(row, cards);
+      const card = findCardForRow(row, rows, cards);
       if (card) card.classList.toggle('mn-v6-filtered', !visible);
     });
   };
@@ -75,50 +84,61 @@
 
     const favorites = readFavorites();
     const rows = Array.from(list.querySelectorAll('.mn-server-row'));
+    assignRowKeys(rows);
 
     rows.forEach((row) => {
-      const name = rowName(row);
-      let button = row.querySelector('.mn-favorite-toggle');
-      if (!button) {
-        button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'mn-favorite-toggle';
-        button.addEventListener('click', (event) => {
+      const key = row.dataset.mnFavoriteKey;
+      let toggle = row.querySelector('.mn-favorite-toggle');
+
+      if (!toggle) {
+        toggle = document.createElement('span');
+        toggle.className = 'mn-favorite-toggle';
+        toggle.setAttribute('role', 'button');
+        toggle.setAttribute('tabindex', '0');
+
+        const activate = (event) => {
           event.preventDefault();
           event.stopPropagation();
           const current = readFavorites();
-          if (current.has(name)) current.delete(name);
-          else current.add(name);
+          const currentKey = row.dataset.mnFavoriteKey;
+          if (current.has(currentKey)) current.delete(currentKey);
+          else current.add(currentKey);
           saveFavorites(current);
           applyFavorites();
+        };
+
+        toggle.addEventListener('click', activate);
+        toggle.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter' || event.key === ' ') activate(event);
         });
-        row.insertBefore(button, row.firstChild);
+        row.insertBefore(toggle, row.firstChild);
       }
 
-      const active = favorites.has(name);
+      const active = favorites.has(key);
       row.classList.toggle('is-favorite', active);
-      button.textContent = active ? '★' : '☆';
-      button.title = active ? 'Verwijder uit favorieten' : 'Zet bovenaan';
-      button.setAttribute('aria-label', button.title);
+      toggle.textContent = active ? '★' : '☆';
+      toggle.title = active ? 'Verwijder uit favorieten' : 'Zet bovenaan';
+      toggle.setAttribute('aria-label', toggle.title);
+      toggle.setAttribute('aria-pressed', String(active));
     });
 
-    rows.sort((a, b) => {
-      const aFavorite = favorites.has(rowName(a)) ? 1 : 0;
-      const bFavorite = favorites.has(rowName(b)) ? 1 : 0;
-      return bFavorite - aFavorite;
-    }).forEach((row) => list.appendChild(row));
+    rows
+      .map((row, index) => ({ row, index, favorite: favorites.has(row.dataset.mnFavoriteKey) }))
+      .sort((a, b) => Number(b.favorite) - Number(a.favorite) || a.index - b.index)
+      .forEach(({ row }) => list.appendChild(row));
   };
 
   const trackStatusChanges = () => {
     document.querySelectorAll('#mn-dashboard-pro .mn-server-row').forEach((row) => {
+      const key = row.dataset.mnFavoriteKey || rowName(row);
       const name = rowName(row);
       const state = rowState(row);
-      const previous = previousStates.get(name);
+      const previous = previousStates.get(key);
       if (initialized && previous && previous !== state) {
         const kind = /running/i.test(state) ? 'success' : /offline|waiting|sleep/i.test(state) ? 'warning' : 'info';
         showToast(name, `Status gewijzigd naar ${state}`, kind);
       }
-      previousStates.set(name, state);
+      previousStates.set(key, state);
     });
     initialized = true;
   };

@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="605"
+SCRIPT_VERSION="606"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
 THEME_VERSION="${THEME_VERSION:-6.0.0}"
@@ -20,30 +20,31 @@ POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${
 COLLAPSE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterCollapse.js?v=${SCRIPT_VERSION}\"></script>"
 NAMES_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterNames.js?v=${SCRIPT_VERSION}\"></script>"
 SUITE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlSuite.js?v=${SCRIPT_VERSION}\"></script>"
+STATUS_FIX_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterStatusFix.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
-    echo "Gebruik: sudo ./scripts/install.sh [INSTANCE_NAME]"
+    echo "Usage: sudo ./scripts/install.sh [INSTANCE_NAME]"
     exit 1
 fi
 
 if [[ ! -d "$SOURCE" ]]; then
-    echo "Themamap niet gevonden: $SOURCE"
+    echo "Theme directory not found: $SOURCE"
     exit 1
 fi
 
 if [[ ! -d "$(dirname "$TARGET")" ]]; then
-    echo "AMP-themamap niet gevonden voor instance: $INSTANCE_NAME"
+    echo "AMP theme directory not found for instance: $INSTANCE_NAME"
     exit 1
 fi
 
 if [[ -d "$TARGET" ]]; then
     BACKUP="${TARGET}.backup-$(date +%Y%m%d-%H%M%S)"
-    echo "Back-up maken: $BACKUP"
+    echo "Creating backup: $BACKUP"
     cp -a "$TARGET" "$BACKUP"
 fi
 
 if [[ -f "$SOURCE/build-theme.sh" ]]; then
-    echo "MemoNetwork.css bouwen..."
+    echo "Building MemoNetwork.css..."
     bash "$SOURCE/build-theme.sh"
 fi
 
@@ -64,22 +65,22 @@ find "$TARGET" -type f -exec chmod 644 {} \;
 chmod 755 "$TARGET/build-theme.sh" 2>/dev/null || true
 
 if [[ -f "$AMP_HTML" ]]; then
-    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory|ControlCenterNames|ControlSuite)\.js[^\"]*"></script>#d' "$AMP_HTML"
+    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory|ControlCenterNames|ControlSuite|ControlCenterStatusFix)\.js[^\"]*"></script>#d' "$AMP_HTML"
 
     if grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n</body>#" "$AMP_HTML"
+        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n$STATUS_FIX_TAG\n</body>#" "$AMP_HTML"
     else
-        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" >> "$AMP_HTML"
+        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" "$STATUS_FIX_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
     chmod 644 "$AMP_HTML"
 fi
 
-echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
-echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
-echo "Control Suite v${THEME_VERSION} geïnstalleerd."
-echo "Favorieten en serverzoekfunctie zijn volledig verwijderd."
-echo "Statusmeldingen blijven ingeschakeld."
+echo "MemoNetwork Edition installed for $INSTANCE_NAME."
+echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
+echo "Control Suite v${THEME_VERSION} installed."
+echo "Running, Sleeping, Waiting and Offline status detection corrected."
+echo "Control Center interface translated to English."
 echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
-echo "Vernieuw AMP met Ctrl+Shift+R."
+echo "Refresh AMP with Ctrl+Shift+R."

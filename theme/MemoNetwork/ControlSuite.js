@@ -1,10 +1,15 @@
 (() => {
   'use strict';
 
-  const FAVORITES_KEY = 'memonetwork-v6-favorites-v3';
-  const OLD_KEYS = ['memonetwork-v6-favorites', 'memonetwork-v6-favorites-v2'];
+  const FAVORITES_KEY = 'memonetwork-v6-favorites-v4';
+  const OLD_KEYS = [
+    'memonetwork-v6-favorites',
+    'memonetwork-v6-favorites-v2',
+    'memonetwork-v6-favorites-v3'
+  ];
   const previousStates = new Map();
   let initialized = false;
+  let delegatedEventsInstalled = false;
 
   const rowName = (row) => row.querySelector('.mn-server-name strong')?.textContent?.trim() || 'Server';
   const rowState = (row) => row.querySelector('.mn-server-name small')?.textContent?.trim() || 'Onbekend';
@@ -56,12 +61,42 @@
   };
 
   const toggleFavorite = (row) => {
+    if (!row) return;
     const key = favoriteKey(row);
     const favorites = readFavorites();
-    if (favorites.has(key)) favorites.delete(key);
+    const active = favorites.has(key);
+
+    if (active) favorites.delete(key);
     else favorites.add(key);
+
     saveFavorites(favorites);
     applyFavorites();
+    showToast(rowName(row), active ? 'Verwijderd uit favorieten' : 'Toegevoegd aan favorieten', 'info');
+  };
+
+  const installDelegatedEvents = () => {
+    if (delegatedEventsInstalled) return;
+    delegatedEventsInstalled = true;
+
+    document.addEventListener('click', (event) => {
+      const toggle = event.target.closest?.('.mn-favorite-toggle');
+      if (!toggle) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      toggleFavorite(toggle.closest('.mn-server-row'));
+    }, true);
+
+    document.addEventListener('keydown', (event) => {
+      const toggle = event.target.closest?.('.mn-favorite-toggle');
+      if (!toggle || (event.key !== 'Enter' && event.key !== ' ')) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation();
+      toggleFavorite(toggle.closest('.mn-server-row'));
+    }, true);
   };
 
   const applyFavorites = () => {
@@ -80,24 +115,6 @@
         toggle.className = 'mn-favorite-toggle';
         toggle.setAttribute('role', 'switch');
         toggle.setAttribute('tabindex', '0');
-
-        toggle.addEventListener('pointerdown', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-        });
-        toggle.addEventListener('click', (event) => {
-          event.preventDefault();
-          event.stopPropagation();
-          toggleFavorite(row);
-        });
-        toggle.addEventListener('keydown', (event) => {
-          if (event.key === 'Enter' || event.key === ' ') {
-            event.preventDefault();
-            event.stopPropagation();
-            toggleFavorite(row);
-          }
-        });
-
         row.insertBefore(toggle, row.firstChild);
       }
 
@@ -154,6 +171,7 @@
 
   const start = () => {
     clearOldFavorites();
+    installDelegatedEvents();
     update();
     new MutationObserver(queueUpdate).observe(document.body, { childList: true, subtree: true });
     window.setInterval(update, 1500);

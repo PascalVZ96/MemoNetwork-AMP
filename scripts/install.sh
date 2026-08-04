@@ -7,7 +7,14 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="524"
+SCRIPT_VERSION="525"
+
+THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
+THEME_VERSION="${THEME_VERSION:-5.1.0}"
+GIT_COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=7 HEAD 2>/dev/null || printf 'unknown')"
+BUILD_DATE="$(date '+%d-%m-%Y')"
+
+BUILD_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/BuildInfo.js?v=${SCRIPT_VERSION}\"></script>"
 SCRIPT_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>"
 POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>"
 
@@ -39,28 +46,27 @@ fi
 
 mkdir -p "$TARGET"
 cp -a "$SOURCE/." "$TARGET/"
+
+cat > "$TARGET/BuildInfo.js" <<EOF
+window.MemoNetworkBuild = Object.freeze({
+  version: "$THEME_VERSION",
+  commit: "$GIT_COMMIT",
+  date: "$BUILD_DATE"
+});
+EOF
+
 chown -R amp:amp "$TARGET"
 find "$TARGET" -type d -exec chmod 755 {} \;
 find "$TARGET" -type f -exec chmod 644 {} \;
 chmod 755 "$TARGET/build-theme.sh" 2>/dev/null || true
 
 if [[ -f "$AMP_HTML" ]]; then
-    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/DashboardPro\.js[^\"]*"></script>#d' "$AMP_HTML"
+    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish)\.js[^\"]*"></script>#d' "$AMP_HTML"
 
-    if grep -q '/Themes/AMPThemes/MemoNetwork/MemoNetwork.js' "$AMP_HTML"; then
-        sed -Ei "s#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork\\.js[^\"]*\"></script>#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>#" "$AMP_HTML"
-    elif grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$SCRIPT_TAG\n</body>#" "$AMP_HTML"
+    if grep -q '</body>' "$AMP_HTML"; then
+        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n</body>#" "$AMP_HTML"
     else
-        printf '\n%s\n' "$SCRIPT_TAG" >> "$AMP_HTML"
-    fi
-
-    if grep -q '/Themes/AMPThemes/MemoNetwork/SystemPolish.js' "$AMP_HTML"; then
-        sed -Ei "s#<script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish\\.js[^\"]*\"></script>#<script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>#" "$AMP_HTML"
-    elif grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$POLISH_TAG\n</body>#" "$AMP_HTML"
-    else
-        printf '\n%s\n' "$POLISH_TAG" >> "$AMP_HTML"
+        printf '\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
@@ -69,5 +75,5 @@ fi
 
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
 echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
-echo "SystemPolish.js is ingeschakeld."
+echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
 echo "Vernieuw AMP met Ctrl+Shift+R."

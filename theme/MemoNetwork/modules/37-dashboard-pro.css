@@ -3,11 +3,12 @@
 .ServerGroupHeader {
   display: flex !important;
   flex-wrap: wrap !important;
-  align-items: flex-start;
+  align-items: center !important;
 }
 
 .ServerGroupHeader > .ServerGroupName {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 .ServerGroupHeader > .SystemInfo {
@@ -92,34 +93,41 @@ html.mn-hide-control-badge #sideMenuContainer::after {
   flex-direction: column;
   align-items: flex-end;
   justify-content: center;
-  gap: 2px;
-  min-width: 280px;
-  padding: 7px 10px;
-  border: 1px solid rgba(75, 204, 255, .18);
-  border-radius: 9px;
-  background: rgba(2, 18, 31, .28);
-  line-height: 1.2;
+  align-self: center;
+  min-width: 300px;
+  min-height: 40px;
+  margin: 0 2px 0 18px;
+  padding: 3px 8px 3px 16px;
+  border: 0;
+  border-left: 1px solid rgba(190, 230, 245, .22);
+  border-radius: 0;
+  background: transparent;
+  box-sizing: border-box;
+  line-height: 1.18;
   text-align: right;
 }
 
 .mn-system-os {
-  color: #dff8ff;
-  font-size: 12px;
-  font-weight: 750;
+  color: rgba(236, 250, 255, .94);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .01em;
 }
 
 .mn-system-hardware {
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 6px;
+  margin-top: 3px;
   color: rgba(188, 221, 234, .76);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 600;
   white-space: nowrap;
 }
 
 .mn-system-hardware i {
-  color: rgba(70, 205, 255, .55);
+  color: rgba(70, 205, 255, .62);
   font-style: normal;
 }
 
@@ -127,7 +135,9 @@ html.mn-hide-control-badge #sideMenuContainer::after {
   #mn-dashboard-pro { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
   .ServerGroupHeader > .SystemInfo.mn-system-info {
-    min-width: 0;
+    min-width: 235px;
+    margin-left: 10px;
+    padding-left: 10px;
   }
 }
 
@@ -135,12 +145,18 @@ html.mn-hide-control-badge #sideMenuContainer::after {
   .ServerGroupHeader > .SystemInfo.mn-system-info {
     align-items: flex-start;
     flex: 0 0 100%;
-    margin-top: 8px;
+    min-width: 0;
+    min-height: auto;
+    margin: 8px 0 0;
+    padding: 7px 2px 0;
+    border-top: 1px solid rgba(190, 230, 245, .18);
+    border-left: 0;
     text-align: left;
   }
 
   .mn-system-hardware {
     flex-wrap: wrap;
+    justify-content: flex-start;
     white-space: normal;
   }
 }

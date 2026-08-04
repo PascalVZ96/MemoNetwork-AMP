@@ -2,10 +2,12 @@
   'use strict';
 
   const BUILD_INFO = window.MemoNetworkBuild ?? {};
-  const VERSION = BUILD_INFO.version ?? '5.2.0';
+  const VERSION = BUILD_INFO.version ?? '5.3.0';
   const COMMIT = BUILD_INFO.commit ?? 'unknown';
   const BUILD_DATE = BUILD_INFO.date ?? 'unknown';
-  let activeFilter = 'all';
+  const previousStates = new Map();
+  const activity = [];
+  let initialized = false;
 
   const numberFrom = (value) => {
     const number = Number(String(value ?? '').replace(',', '.'));
@@ -25,6 +27,11 @@
   const metricData = (metric) => ({
     label: metric.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '',
     value: metric.querySelector('h4')?.textContent?.trim() ?? ''
+  });
+
+  const findMetric = (entry, terms) => Array.from(entry.querySelectorAll('.ServerEntryMetric')).find((metric) => {
+    const label = metricData(metric).label;
+    return terms.some((term) => label.includes(term));
   });
 
   const updateProgressBars = () => {
@@ -63,100 +70,129 @@
     entry.getAttribute('data-state') === '20' ||
     /running/i.test(entry.querySelector('.ServerEntryStatus')?.textContent ?? entry.textContent ?? '');
 
-  const findMetric = (entry, terms) => Array.from(entry.querySelectorAll('.ServerEntryMetric')).find((metric) => {
-    const label = metricData(metric).label;
-    return terms.some((term) => label.includes(term));
-  });
+  const serverName = (entry) => {
+    const candidates = ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3'];
+    for (const selector of candidates) {
+      const text = entry.querySelector(selector)?.textContent?.trim();
+      if (text && !/cpu|memory|users/i.test(text)) return text.replace(/\s+SERVER\s*$/i, '').trim();
+    }
+    return 'Server';
+  };
 
-  const createDashboard = () => {
+  const entryData = (entry) => {
+    const running = isRunning(entry);
+    const playersMetric = findMetric(entry, ['user', 'player']);
+    const cpuMetric = findMetric(entry, ['cpu']);
+    const memoryMetric = findMetric(entry, ['memory', 'ram']);
+    return {
+      entry,
+      name: serverName(entry),
+      running,
+      players: ratioFrom(playersMetric ? metricData(playersMetric).value : ''),
+      cpu: percentFrom(cpuMetric ? metricData(cpuMetric).value : ''),
+      memory: ratioFrom(memoryMetric ? metricData(memoryMetric).value : '')
+    };
+  };
+
+  const addActivity = (message, kind = 'info') => {
+    activity.unshift({ message, kind, time: new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
+    if (activity.length > 6) activity.length = 6;
+  };
+
+  const trackChanges = (servers) => {
+    servers.forEach((server) => {
+      const old = previousStates.get(server.name);
+      const current = { running: server.running, players: server.players.used };
+      if (initialized && old) {
+        if (old.running !== current.running) addActivity(`${server.name} is ${current.running ? 'gestart' : 'gestopt'}`, current.running ? 'success' : 'warning');
+        if (old.players !== current.players) addActivity(`${server.name}: ${Math.round(current.players)} speler${current.players === 1 ? '' : 's'} online`, 'players');
+      }
+      previousStates.set(server.name, current);
+    });
+    initialized = true;
+  };
+
+  const createControlCenter = () => {
     const panel = document.createElement('section');
     panel.id = 'mn-dashboard-pro';
     panel.innerHTML = `
-      <div class="mn-dashboard-toolbar">
-        <div><strong>Dashboard Plus</strong><span>Live instance overview</span></div>
-        <div class="mn-dashboard-filters" role="group" aria-label="Serverfilter">
-          <button type="button" data-filter="all" class="active">All</button>
-          <button type="button" data-filter="online">Online</button>
-          <button type="button" data-filter="offline">Offline</button>
-        </div>
+      <div class="mn-control-heading">
+        <div><span class="mn-health-dot"></span><strong data-health>System status controleren…</strong><small>Live Control Center</small></div>
+        <span class="mn-live-time" data-updated>--:--:--</span>
       </div>
-      <div class="mn-dashboard-grid">
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Servers online</span><strong class="mn-dashboard-stat-value" data-stat="online">0</strong><span class="mn-dashboard-stat-detail" data-detail="online">0 servers total</span></article>
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Servers offline</span><strong class="mn-dashboard-stat-value" data-stat="offline">0</strong><span class="mn-dashboard-stat-detail">Stopped instances</span></article>
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Players online</span><strong class="mn-dashboard-stat-value" data-stat="players">0</strong><span class="mn-dashboard-stat-detail" data-detail="players">0 / 0 slots</span></article>
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Average CPU</span><strong class="mn-dashboard-stat-value" data-stat="cpu">0%</strong><span class="mn-dashboard-stat-detail">Running instances</span></article>
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Memory in use</span><strong class="mn-dashboard-stat-value" data-stat="memory">0 GB</strong><span class="mn-dashboard-stat-detail" data-detail="memory">0 / 0 GB</span></article>
-        <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Last refresh</span><strong class="mn-dashboard-stat-value mn-dashboard-time" data-stat="updated">--:--:--</strong><span class="mn-dashboard-stat-detail">Live AMP data</span></article>
+      <div class="mn-control-layout">
+        <div class="mn-server-overview" data-server-list></div>
+        <aside class="mn-activity-panel">
+          <div class="mn-section-title"><strong>Live activiteit</strong><span>Deze browsersessie</span></div>
+          <div class="mn-activity-list" data-activity-list></div>
+        </aside>
+      </div>
+      <div class="mn-summary-strip">
+        <span><b data-summary-online>0</b> online</span>
+        <span><b data-summary-players>0</b> spelers</span>
+        <span><b data-summary-cpu>0%</b> gemiddelde CPU</span>
+        <span><b data-summary-memory>0 GB</b> RAM in gebruik</span>
       </div>`;
-
-    panel.querySelectorAll('[data-filter]').forEach((button) => {
-      button.addEventListener('click', () => {
-        activeFilter = button.dataset.filter ?? 'all';
-        panel.querySelectorAll('[data-filter]').forEach((item) => item.classList.toggle('active', item === button));
-        updateDashboard();
-      });
-    });
     return panel;
   };
 
-  const applyFilter = (entries) => {
-    entries.forEach((entry) => {
-      const running = isRunning(entry);
-      const visible = activeFilter === 'all' || (activeFilter === 'online' && running) || (activeFilter === 'offline' && !running);
-      entry.classList.toggle('mn-filter-hidden', !visible);
-    });
+  const renderServers = (panel, servers) => {
+    const list = panel.querySelector('[data-server-list]');
+    const html = servers.map((server, index) => `
+      <button type="button" class="mn-server-row ${server.running ? 'is-online' : 'is-offline'}" data-server-index="${index}">
+        <span class="mn-server-state"></span>
+        <span class="mn-server-name"><strong>${server.name}</strong><small>${server.running ? 'Running' : 'Offline'}</small></span>
+        <span><b>${Math.round(server.players.used)}/${Math.round(server.players.total)}</b><small>Players</small></span>
+        <span><b>${server.cpu.toFixed(1)}%</b><small>CPU</small></span>
+        <span><b>${server.memory.used.toFixed(2)} GB</b><small>RAM</small></span>
+        <span class="mn-row-arrow">›</span>
+      </button>`).join('');
+    if (list.innerHTML !== html) {
+      list.innerHTML = html;
+      list.querySelectorAll('[data-server-index]').forEach((button) => {
+        button.addEventListener('click', () => {
+          const server = servers[Number(button.dataset.serverIndex)];
+          server?.entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          server?.entry.classList.add('mn-card-highlight');
+          window.setTimeout(() => server?.entry.classList.remove('mn-card-highlight'), 1400);
+        });
+      });
+    }
   };
 
-  const updateDashboard = () => {
+  const renderActivity = (panel) => {
+    const list = panel.querySelector('[data-activity-list]');
+    const items = activity.length ? activity : [{ time: '--:--:--', message: 'Wachten op statuswijzigingen…', kind: 'muted' }];
+    list.innerHTML = items.map((item) => `<div class="mn-activity-item is-${item.kind}"><time>${item.time}</time><span>${item.message}</span></div>`).join('');
+  };
+
+  const updateControlCenter = () => {
     const header = findLocalInstancesHeader();
     if (!header) return;
-
     document.querySelector('.ServerGroupHeader.loadPending #mn-dashboard-pro')?.remove();
     let panel = document.getElementById('mn-dashboard-pro');
-    if (!panel) panel = createDashboard();
+    if (!panel) panel = createControlCenter();
     if (panel.parentElement !== header) header.appendChild(panel);
 
     const group = findLocalInstancesGroup(header);
-    const entries = getEntries(group ?? document);
-    const active = entries.filter(isRunning);
-    applyFilter(entries);
+    const servers = getEntries(group ?? document).map(entryData);
+    const active = servers.filter((server) => server.running);
+    trackChanges(servers);
+    renderServers(panel, servers);
+    renderActivity(panel);
 
-    let playersUsed = 0;
-    let playersTotal = 0;
-    let cpuTotal = 0;
-    let cpuCount = 0;
-    let memoryUsed = 0;
-    let memoryTotal = 0;
+    const players = active.reduce((sum, server) => sum + server.players.used, 0);
+    const cpu = active.length ? active.reduce((sum, server) => sum + server.cpu, 0) / active.length : 0;
+    const memory = active.reduce((sum, server) => sum + server.memory.used, 0);
+    const allHealthy = servers.length > 0 && active.length === servers.length;
 
-    active.forEach((entry) => {
-      const players = findMetric(entry, ['user', 'player']);
-      if (players) {
-        const ratio = ratioFrom(metricData(players).value);
-        playersUsed += ratio.used;
-        playersTotal += ratio.total;
-      }
-      const cpu = findMetric(entry, ['cpu']);
-      if (cpu) {
-        cpuTotal += percentFrom(metricData(cpu).value);
-        cpuCount += 1;
-      }
-      const memory = findMetric(entry, ['memory', 'ram']);
-      if (memory) {
-        const ratio = ratioFrom(metricData(memory).value);
-        memoryUsed += ratio.used;
-        memoryTotal += ratio.total;
-      }
-    });
-
-    panel.querySelector('[data-stat="online"]').textContent = String(active.length);
-    panel.querySelector('[data-detail="online"]').textContent = `${entries.length} servers total`;
-    panel.querySelector('[data-stat="offline"]').textContent = String(Math.max(0, entries.length - active.length));
-    panel.querySelector('[data-stat="players"]').textContent = String(Math.round(playersUsed));
-    panel.querySelector('[data-detail="players"]').textContent = `${Math.round(playersUsed)} / ${Math.round(playersTotal)} slots`;
-    panel.querySelector('[data-stat="cpu"]').textContent = `${(cpuCount ? cpuTotal / cpuCount : 0).toFixed(1)}%`;
-    panel.querySelector('[data-stat="memory"]').textContent = `${memoryUsed.toFixed(2)} GB`;
-    panel.querySelector('[data-detail="memory"]').textContent = `${memoryUsed.toFixed(2)} / ${memoryTotal.toFixed(2)} GB`;
-    panel.querySelector('[data-stat="updated"]').textContent = new Date().toLocaleTimeString('nl-NL', { hour12: false });
+    panel.classList.toggle('has-offline', !allHealthy);
+    panel.querySelector('[data-health]').textContent = allHealthy ? 'Alle systemen operationeel' : `${servers.length - active.length} server${servers.length - active.length === 1 ? '' : 's'} offline`;
+    panel.querySelector('[data-updated]').textContent = `Live · ${new Date().toLocaleTimeString('nl-NL', { hour12: false })}`;
+    panel.querySelector('[data-summary-online]').textContent = `${active.length}/${servers.length}`;
+    panel.querySelector('[data-summary-players]').textContent = String(Math.round(players));
+    panel.querySelector('[data-summary-cpu]').textContent = `${cpu.toFixed(1)}%`;
+    panel.querySelector('[data-summary-memory]').textContent = `${memory.toFixed(2)} GB`;
   };
 
   const ensureFooter = () => {
@@ -200,7 +236,7 @@
 
   const update = () => {
     updateProgressBars();
-    updateDashboard();
+    updateControlCenter();
     ensureFooter();
     ensureDesktopDrawer();
   };

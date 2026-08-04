@@ -7,8 +7,9 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="520"
+SCRIPT_VERSION="521"
 SCRIPT_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>"
+POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
     echo "Gebruik: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -48,16 +49,18 @@ if [[ -f "$AMP_HTML" ]]; then
 
     if grep -q '/Themes/AMPThemes/MemoNetwork/MemoNetwork.js' "$AMP_HTML"; then
         sed -Ei "s#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork\\.js[^\"]*\"></script>#<script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>#" "$AMP_HTML"
+    elif grep -q '</body>' "$AMP_HTML"; then
+        sed -i "s#</body>#$SCRIPT_TAG\n</body>#" "$AMP_HTML"
     else
-        HTML_BACKUP="${AMP_HTML}.memonetwork-backup-$(date +%Y%m%d-%H%M%S)"
-        echo "AMP.html back-up maken: $HTML_BACKUP"
-        cp -a "$AMP_HTML" "$HTML_BACKUP"
+        printf '\n%s\n' "$SCRIPT_TAG" >> "$AMP_HTML"
+    fi
 
-        if grep -q '</body>' "$AMP_HTML"; then
-            sed -i "s#</body>#$SCRIPT_TAG\n</body>#" "$AMP_HTML"
-        else
-            printf '\n%s\n' "$SCRIPT_TAG" >> "$AMP_HTML"
-        fi
+    if grep -q '/Themes/AMPThemes/MemoNetwork/SystemPolish.js' "$AMP_HTML"; then
+        sed -Ei "s#<script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish\\.js[^\"]*\"></script>#<script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>#" "$AMP_HTML"
+    elif grep -q '</body>' "$AMP_HTML"; then
+        sed -i "s#</body>#$POLISH_TAG\n</body>#" "$AMP_HTML"
+    else
+        printf '\n%s\n' "$POLISH_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
@@ -66,4 +69,5 @@ fi
 
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
 echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
+echo "SystemPolish.js is ingeschakeld."
 echo "Vernieuw AMP met Ctrl+Shift+R."

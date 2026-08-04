@@ -1,30 +1,39 @@
 # 🚀 MemoNetwork AMP Edition
 
-A modern, premium theme for **CubeCoders AMP** focused on a clean interface, responsive layouts and an improved server management experience.
+A modern, premium edition for **CubeCoders AMP** with a responsive interface, improved server cards and a live management overview.
 
-![Version](https://img.shields.io/badge/Version-v5.0.2-blue)
+![Version](https://img.shields.io/badge/Version-v5.3.0-blue)
 ![Status](https://img.shields.io/badge/Status-Stable-brightgreen)
 ![AMP](https://img.shields.io/badge/AMP-v2.8-orange)
 ![License](https://img.shields.io/badge/License-MIT-lightgrey)
 
 ---
 
-# ✨ Features
+## ✨ Features
 
-## 🎨 Premium Interface
+### 🎨 MemoNetwork Interface
 
 - Modern MemoNetwork styling
-- Redesigned cards
-- Consistent spacing
-- Smooth animations
-- Improved typography
-- Premium buttons
+- Redesigned instance cards
+- Improved typography and spacing
+- Premium buttons and status badges
+- Consistent desktop and mobile layout
+- MemoNetwork branding and automatic build information
 
----
+### 📊 Live Control Center
 
-## 📱 Responsive
+- Live overview of every local AMP instance
+- Online, sleeping, waiting and offline states
+- Players, CPU and memory per server
+- Correct MB and GB memory conversion
+- Live activity feed for status and player changes
+- Click a server row to jump to its instance card
+- Compact collapsible layout
+- Live totals for servers, players, CPU and memory
 
-Optimized for
+### 📱 Responsive Design
+
+Optimized for:
 
 - Desktop
 - Laptop
@@ -33,150 +42,136 @@ Optimized for
 
 Including:
 
-- Responsive Desktop Drawer
-- Mobile Navigation
-- Adaptive Layout
-- Improved Sidebar
+- Responsive desktop drawer
+- Mobile navigation
+- Adaptive instance cards
+- Improved sidebar behaviour
+- Mobile-safe action buttons and metrics
+
+### ⚡ User Experience
+
+- Improved progress bars
+- Better toolbars and forms
+- Cleaner tables and panels
+- Improved hover and focus states
+- System information with readable CPU, RAM and OS details
+- Automatic cache versioning during installation
 
 ---
 
-## 📊 Live Metrics
+## 🚀 Installation
 
-Live widgets for
-
-- CPU Usage
-- Memory Usage
-- Online Players
-
-Including animated progress bars.
-
----
-
-## ⚡ Improved User Experience
-
-- Better Status Badges
-- Improved Toolbars
-- Cleaner Forms
-- Better Tables
-- Better Hover Effects
-- Better Focus States
-
----
-
-## 🐧 Extra
-
-- Linux Mascot
-- MemoNetwork Branding
-- Responsive Navigation
-- Improved Installer
-- Automatic CSS Build
-- JavaScript Module Support
-
----
-
-# 📷 Screenshots
-
-Desktop
-
-*(Coming soon)*
-
-Tablet
-
-*(Coming soon)*
-
-Mobile
-
-*(Coming soon)*
-
----
-
-# 🚀 Installation
-
-Clone the repository
+Clone the repository:
 
 ```bash
-git clone https://github.com/PascalVZ96/MemoNetwork-AMP
+git clone https://github.com/PascalVZ96/MemoNetwork-AMP.git
 ```
 
-Go into the repository
+Open the repository:
 
 ```bash
 cd MemoNetwork-AMP
 ```
 
-Install
+Install the theme for your ADS instance:
 
 ```bash
 sudo bash ./scripts/install.sh ADS01
 ```
 
-Refresh AMP
+Replace `ADS01` with the name of your AMP ADS instance when needed.
 
-```
+Refresh AMP after installation:
+
+```text
 Ctrl + Shift + R
 ```
 
 ---
 
-# ✅ Current Stable Version
+## 🔄 Updating
 
-# v5.0.2 Stable
+```bash
+cd ~/MemoNetwork-AMP
 
-Latest improvements
+git restore theme/MemoNetwork/MemoNetwork.css
+git switch main
+git pull origin main
 
-- Premium Dashboard
-- Responsive Desktop Drawer
-- Mobile Improvements
-- Live Metrics
-- Premium Buttons
-- Responsive Sidebar
-- Better Menu
-- Responsive Cards
-- Better Progress Bars
-- JavaScript Improvements
-- Performance Improvements
-- Multiple UI Fixes
+sudo bash ./scripts/install.sh ADS01
+```
+
+Then refresh AMP with `Ctrl + Shift + R`.
 
 ---
 
-# 🛣 Roadmap
+## ✅ Current Stable Version
 
-## Version 6
+### v5.3.0 Stable
 
-Planned features
+Main improvements:
 
-- Live Console Preview
-- Minecraft Player Avatars
-- TPS Widget
-- Backup Status Widget
-- Better Graphs
-- Notification Center
-- Discord Integration
-- Plugin Marketplace
-- Mobile Companion App
-
----
-
-# 🤝 Contributing
-
-Suggestions and improvements are always welcome.
-
-Feel free to open an Issue or Pull Request.
+- Live Control Center
+- Live activity feed
+- Running, sleeping, waiting and offline instance detection
+- Correct MB/GB memory handling
+- Duplicate instance-name support
+- Compact collapsible Control Center
+- Responsive desktop drawer
+- Mobile improvements
+- Automatic version, commit and build-date footer
+- Improved instance cards and progress bars
 
 ---
 
-# ❤️ Credits
+## 📁 Project Structure
 
-Created by
+```text
+scripts/
+  install.sh              Installer for an AMP ADS instance
 
-**PascalVZ**
+theme/MemoNetwork/
+  MemoNetwork.js          Main interface and Control Center logic
+  ControlCenterCollapse.js
+  SystemPolish.js
+  build-theme.sh          Builds MemoNetwork.css from the modules
+  info.json               Theme metadata and version
+  modules/                Individual CSS modules
+```
 
-UI Design & Development
-
-Together with ChatGPT
+`MemoNetwork.css` is generated by `build-theme.sh`. Make permanent CSS changes inside the files under `theme/MemoNetwork/modules/`.
 
 ---
 
-# ⭐ Support
+## 🛣 Roadmap
+
+Possible future additions:
+
+- Live CPU and RAM history graphs
+- Server uptime information
+- Backup status widgets
+- Notification toasts for starts, stops and crashes
+- Favorite instances
+- Global server search
+- Theme settings panel
+- Live console preview
+
+---
+
+## 🤝 Contributing
+
+Suggestions and improvements are welcome. Feel free to open an Issue or Pull Request.
+
+---
+
+## ❤️ Credits
+
+Created by **PascalVZ**.
+
+UI design and development together with ChatGPT.
+
+---
+
+## ⭐ Support
 
 If you like this project, consider giving it a ⭐ on GitHub.

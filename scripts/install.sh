@@ -7,10 +7,10 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="526"
+SCRIPT_VERSION="530"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
-THEME_VERSION="${THEME_VERSION:-5.2.0}"
+THEME_VERSION="${THEME_VERSION:-5.3.0}"
 GIT_COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=7 HEAD 2>/dev/null || printf 'unknown')"
 BUILD_DATE="$(date '+%d-%m-%Y')"
 
@@ -75,6 +75,6 @@ fi
 
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
 echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
-echo "Dashboard Plus v${THEME_VERSION} geïnstalleerd."
+echo "Live Control Center v${THEME_VERSION} geïnstalleerd."
 echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
 echo "Vernieuw AMP met Ctrl+Shift+R."

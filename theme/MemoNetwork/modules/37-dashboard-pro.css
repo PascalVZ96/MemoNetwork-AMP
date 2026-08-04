@@ -142,16 +142,49 @@ html.mn-hide-control-badge #sideMenuContainer::after {
 }
 
 @media (max-width: 700px) {
+  .ServerGroupHeader {
+    display: flex !important;
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+  }
+
+  .ServerGroupHeader > .ServerGroupName {
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    order: 1;
+  }
+
   .ServerGroupHeader > .SystemInfo.mn-system-info {
-    align-items: flex-start;
-    flex: 0 0 100%;
-    min-width: 0;
+    position: static !important;
+    inset: auto !important;
+    right: auto !important;
+    top: auto !important;
+    transform: none !important;
+    float: none !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    align-self: stretch !important;
+    flex: 0 0 auto !important;
+    order: 10;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
     min-height: auto;
-    margin: 8px 0 0;
-    padding: 7px 2px 0;
-    border-top: 1px solid rgba(190, 230, 245, .18);
-    border-left: 0;
-    text-align: left;
+    margin: 10px 0 0 !important;
+    padding: 9px 10px !important;
+    border: 1px solid rgba(190, 230, 245, .16) !important;
+    border-radius: 9px !important;
+    background: rgba(2, 18, 31, .24) !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
+    z-index: auto !important;
+  }
+
+  #mn-dashboard-pro {
+    order: 20;
+    margin-top: 10px;
   }
 
   .mn-system-hardware {

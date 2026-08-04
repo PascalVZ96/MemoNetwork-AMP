@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="535"
+SCRIPT_VERSION="536"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
 THEME_VERSION="${THEME_VERSION:-5.3.0}"
@@ -18,8 +18,6 @@ BUILD_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/BuildInfo.js?v=${SCRI
 SCRIPT_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>"
 POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>"
 COLLAPSE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterCollapse.js?v=${SCRIPT_VERSION}\"></script>"
-STATES_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterStates.js?v=${SCRIPT_VERSION}\"></script>"
-MEMORY_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterMemory.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
     echo "Gebruik: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -67,9 +65,9 @@ if [[ -f "$AMP_HTML" ]]; then
     sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory)\.js[^\"]*"></script>#d' "$AMP_HTML"
 
     if grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$STATES_TAG\n$MEMORY_TAG\n</body>#" "$AMP_HTML"
+        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n</body>#" "$AMP_HTML"
     else
-        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$STATES_TAG" "$MEMORY_TAG" >> "$AMP_HTML"
+        printf '\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
@@ -79,7 +77,7 @@ fi
 echo "MemoNetwork Edition geïnstalleerd voor $INSTANCE_NAME."
 echo "MemoNetwork JavaScript cacheversie: $SCRIPT_VERSION"
 echo "Live Control Center v${THEME_VERSION} geïnstalleerd."
-echo "Dubbele servernamen en MB/GB-geheugen zijn gecorrigeerd."
+echo "Alle instance-statussen en MB/GB-geheugen worden nu in de hoofdcode verwerkt."
 echo "Los inklapicoon ingeschakeld."
 echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
 echo "Vernieuw AMP met Ctrl+Shift+R."

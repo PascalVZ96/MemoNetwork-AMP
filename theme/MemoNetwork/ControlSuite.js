@@ -12,7 +12,7 @@
   let initialized = false;
 
   const rowName = (row) => row.querySelector('.mn-server-name strong')?.textContent?.trim() || 'Server';
-  const rowState = (row) => row.querySelector('.mn-server-name small')?.textContent?.trim() || 'Onbekend';
+  const rowState = (row) => row.querySelector('.mn-server-name small')?.textContent?.trim() || 'Unknown';
 
   const showToast = (title, message, kind = 'info') => {
     let host = document.getElementById('mn-toast-host');
@@ -55,7 +55,7 @@
     document.querySelectorAll('#mn-dashboard-pro .mn-server-row').forEach((row, index) => {
       const name = rowName(row);
       const state = rowState(row);
-      const key = `${name.toLocaleLowerCase('nl-NL')}::${index}`;
+      const key = `${name.toLocaleLowerCase('en-US')}::${index}`;
       const previous = previousStates.get(key);
 
       if (initialized && previous && previous !== state) {
@@ -64,7 +64,7 @@
           : /offline|waiting|sleep/i.test(state)
             ? 'warning'
             : 'info';
-        showToast(name, `Status gewijzigd naar ${state}`, kind);
+        showToast(name, `Status changed to ${state}`, kind);
       }
 
       previousStates.set(key, state);
@@ -94,9 +94,6 @@
     window.setInterval(update, 1500);
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', start, { once: true });
-  } else {
-    start();
-  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();

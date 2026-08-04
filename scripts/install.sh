@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="521"
+SCRIPT_VERSION="522"
 SCRIPT_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/MemoNetwork.js?v=${SCRIPT_VERSION}\"></script>"
 POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${SCRIPT_VERSION}\"></script>"
 

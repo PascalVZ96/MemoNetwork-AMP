@@ -1,22 +1,35 @@
 (() => {
   'use strict';
 
-  const compactText = (node) => (node?.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const compact = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
+
+  const cardName = (entry) => {
+    for (const selector of ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3']) {
+      const value = compact(entry.querySelector(selector)?.textContent);
+      if (value && !/cpu|memory|users|application/i.test(value)) {
+        return value.replace(/\s+SERVER\s*$/i, '').trim();
+      }
+    }
+    return '';
+  };
+
+  const rowName = (row) => compact(row.querySelector('.mn-server-name strong')?.textContent)
+    .replace(/\s+\d+$/, '')
+    .trim();
 
   const getCards = () => Array.from(document.querySelectorAll('.ServerEntry')).filter((entry) =>
-    !/create instance/i.test(entry.textContent ?? '')
+    !/create instance/i.test(compact(entry.textContent)) && cardName(entry)
   );
 
   const detectState = (entry) => {
-    const text = compactText(entry);
+    const text = compact(entry?.textContent);
     const upper = text.toUpperCase();
 
     if (upper.includes('WAITING FOR USER INPUT') || upper.includes('APPLICATION WAITING')) return 'waiting';
     if (upper.includes('APPLICATION SLEEPING') || /\bSLEEPING\b/i.test(text)) return 'sleeping';
     if (upper.includes('INSTANCE NOT RUNNING') || upper.includes('APPLICATION STOPPED') || /\bOFFLINE\b|\bSTOPPED\b/i.test(text)) return 'offline';
     if (/\bSTARTING\b|\bRESTARTING\b|\bUPDATING\b/i.test(text)) return 'busy';
-    if (entry.classList.contains('statusRunning') || entry.getAttribute('data-state') === '20' || /\bRUNNING\b/i.test(text)) return 'online';
-
+    if (entry?.classList.contains('statusRunning') || entry?.getAttribute('data-state') === '20' || /\bRUNNING\b/i.test(text)) return 'online';
     return 'offline';
   };
 
@@ -29,8 +42,8 @@
   }[state] ?? 'Unknown');
 
   const numberFrom = (value) => {
-    const number = Number(String(value ?? '').replace(',', '.'));
-    return Number.isFinite(number) ? number : 0;
+    const parsed = Number(String(value ?? '').replace(',', '.'));
+    return Number.isFinite(parsed) ? parsed : 0;
   };
 
   const ratioFrom = (text) => {
@@ -42,52 +55,54 @@
     const metric = Array.from(entry.querySelectorAll('.ServerEntryMetric')).find((item) =>
       pattern.test(item.querySelector('h3')?.textContent ?? '')
     );
-    return metric?.querySelector('h4')?.textContent?.trim() ?? '';
+    return compact(metric?.querySelector('h4')?.textContent);
   };
 
   const memoryGB = (text) => {
-    const value = String(text ?? '');
-    const ratio = ratioFrom(value);
-    const unit = (value.match(/\b(KB|MB|GB|TB)\b/i)?.[1] ?? 'GB').toUpperCase();
+    const ratio = ratioFrom(text);
+    const unit = (String(text).match(/\b(KB|MB|GB|TB)\b/i)?.[1] ?? 'GB').toUpperCase();
     const factor = { KB: 1 / 1048576, MB: 1 / 1024, GB: 1, TB: 1024 }[unit] ?? 1;
     return ratio.used * factor;
   };
 
-  const formatMemory = (gb) => gb > 0 && gb < 1
-    ? `${Math.round(gb * 1024)} MB`
-    : `${gb.toFixed(2)} GB`;
-
-  const setText = (node, value) => {
-    if (node && node.textContent !== value) node.textContent = value;
-  };
+  const formatMemory = (gb) => gb > 0 && gb < 1 ? `${Math.round(gb * 1024)} MB` : `${gb.toFixed(2)} GB`;
+  const setText = (node, value) => { if (node && node.textContent !== value) node.textContent = value; };
 
   const update = () => {
     const panel = document.getElementById('mn-dashboard-pro');
     if (!panel) return;
 
     const rows = Array.from(panel.querySelectorAll('.mn-server-row'));
-    const cards = getCards().slice(0, rows.length);
-    if (!rows.length || cards.length !== rows.length) return;
+    const cards = getCards();
+    if (!rows.length || !cards.length) return;
 
-    const states = rows.map((row, index) => {
-      const card = cards[index];
+    const usedCards = new Set();
+    const states = rows.map((row) => {
+      const name = rowName(row).toLowerCase();
+      let card = cards.find((candidate) => !usedCards.has(candidate) && cardName(candidate).toLowerCase() === name);
+      if (!card) card = cards.find((candidate) => !usedCards.has(candidate));
+      if (!card) return null;
+      usedCards.add(card);
+
       const state = detectState(card);
-      const nextClass = `is-${state}`;
-
-      if (!row.classList.contains(nextClass)) {
-        row.classList.remove('is-online', 'is-sleeping', 'is-waiting', 'is-busy', 'is-offline');
-        row.classList.add(nextClass);
-      }
-
+      row.classList.remove('is-online', 'is-sleeping', 'is-waiting', 'is-busy', 'is-offline');
+      row.classList.add(`is-${state}`);
       setText(row.querySelector('.mn-server-name small'), labelFor(state));
+
+      if (state !== 'online') {
+        row.querySelectorAll(':scope > span:not(.mn-server-state):not(.mn-server-name):not(.mn-row-arrow) b')
+          .forEach((node) => setText(node, '—'));
+      }
       return { state, card };
-    });
+    }).filter(Boolean);
 
     const online = states.filter((item) => item.state === 'online');
-    const sleeping = states.filter((item) => item.state === 'sleeping').length;
-    const waiting = states.filter((item) => item.state === 'waiting').length;
-    const busy = states.filter((item) => item.state === 'busy').length;
-    const offline = states.filter((item) => item.state === 'offline').length;
+    const counts = {
+      sleeping: states.filter((item) => item.state === 'sleeping').length,
+      waiting: states.filter((item) => item.state === 'waiting').length,
+      busy: states.filter((item) => item.state === 'busy').length,
+      offline: states.filter((item) => item.state === 'offline').length
+    };
 
     const players = online.reduce((sum, item) => sum + ratioFrom(metricValue(item.card, /user|player/i)).used, 0);
     const cpu = online.length
@@ -96,10 +111,10 @@
     const memory = online.reduce((sum, item) => sum + memoryGB(metricValue(item.card, /memory|ram/i)), 0);
 
     const notices = [];
-    if (waiting) notices.push(`${waiting} waiting for input`);
-    if (sleeping) notices.push(`${sleeping} sleeping`);
-    if (busy) notices.push(`${busy} starting`);
-    if (offline) notices.push(`${offline} offline`);
+    if (counts.waiting) notices.push(`${counts.waiting} waiting for input`);
+    if (counts.sleeping) notices.push(`${counts.sleeping} sleeping`);
+    if (counts.busy) notices.push(`${counts.busy} starting`);
+    if (counts.offline) notices.push(`${counts.offline} offline`);
 
     setText(panel.querySelector('[data-health]'), notices.length ? notices.join(' • ') : 'All systems operational');
     setText(panel.querySelector('[data-summary-online]'), `${online.length}/${states.length}`);

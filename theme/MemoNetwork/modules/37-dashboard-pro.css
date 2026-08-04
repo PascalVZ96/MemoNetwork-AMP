@@ -1,11 +1,27 @@
 /* MemoNetwork Edition v5.1 — Dashboard Pro */
 
+.ServerGroupHeader {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: flex-start;
+}
+
+.ServerGroupHeader > .ServerGroupName {
+  flex: 1 1 auto;
+}
+
+.ServerGroupHeader > .SystemInfo {
+  flex: 0 0 auto;
+}
+
 #mn-dashboard-pro {
-  display: grid;
+  display: grid !important;
   grid-template-columns: repeat(4, minmax(0, 1fr));
+  flex: 0 0 100%;
+  order: 20;
   gap: 10px;
   width: 100%;
-  margin: 10px 0 12px;
+  margin: 12px 0 0;
   box-sizing: border-box;
 }
 
@@ -13,7 +29,7 @@
   min-width: 0;
   padding: 12px 14px;
   background: linear-gradient(145deg, rgba(6,31,51,.98), rgba(2,15,27,.98));
-  border: 1px solid rgba(53,203,255,.25);
+  border: 1px solid rgba(53,203,255,.28);
   border-radius: 11px;
   box-shadow: 0 8px 22px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.03);
 }
@@ -44,8 +60,8 @@
 }
 
 .mn-dashboard-stat-detail { margin-top: 5px; }
-.mn-dashboard-stat[data-kind="online"] .mn-dashboard-stat-value { color: #70f0a6; }
-.mn-dashboard-stat[data-kind="players"] .mn-dashboard-stat-value { color: #58ddff; }
+.mn-dashboard-stat:first-child .mn-dashboard-stat-value { color: #70f0a6; }
+.mn-dashboard-stat:nth-child(2) .mn-dashboard-stat-value { color: #58ddff; }
 
 #bgtext.mn-v51-footer {
   display: flex !important;
@@ -56,13 +72,15 @@
   text-align: center;
 }
 
-#bgtext.mn-v51-footer strong {
+#bgtext.mn-v51-footer #versionHeadline {
   color: #36c9ee;
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 700;
 }
 
-#bgtext.mn-v51-footer span { font-size: 11px; }
-#bgtext.mn-v51-footer small { font-size: 9px; }
+#bgtext.mn-v51-footer .tiny {
+  font-size: 9px;
+}
 
 @media (max-width: 980px) {
   #mn-dashboard-pro { grid-template-columns: repeat(2, minmax(0, 1fr)); }

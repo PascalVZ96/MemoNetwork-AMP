@@ -1,0 +1,160 @@
+/* MemoNetwork Edition v6.0 — Control Suite */
+
+.mn-control-heading {
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 320px) auto auto;
+}
+
+.mn-v6-suite {
+  min-width: 0;
+}
+
+.mn-v6-search {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 7px;
+  min-height: 30px;
+  padding: 0 7px 0 9px;
+  border: 1px solid rgba(82, 213, 255, .23);
+  border-radius: 8px;
+  background: rgba(1, 16, 28, .46);
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease;
+}
+
+.mn-v6-search:focus-within {
+  border-color: rgba(82, 213, 255, .68);
+  background: rgba(2, 24, 40, .7);
+  box-shadow: 0 0 0 2px rgba(65, 203, 247, .1);
+}
+
+.mn-v6-search .mat-icon {
+  color: rgba(115, 215, 247, .72);
+  font-size: 16px;
+}
+
+.mn-v6-search input {
+  width: 100%;
+  min-width: 0;
+  height: 28px;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #effbff !important;
+  box-shadow: none !important;
+  font-size: 10px !important;
+  outline: none !important;
+}
+
+.mn-v6-search input::placeholder {
+  color: rgba(151, 199, 217, .58);
+}
+
+.mn-v6-search button {
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 2px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(183, 222, 236, .62) !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+}
+
+.mn-v6-search button:hover {
+  color: #fff !important;
+}
+
+.mn-server-row {
+  grid-template-columns: auto auto minmax(135px, 1.2fr) repeat(3, minmax(72px, .55fr)) auto;
+}
+
+.mn-favorite-toggle {
+  width: auto !important;
+  min-width: 0 !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: rgba(162, 208, 226, .46) !important;
+  box-shadow: none !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  transition: color .16s ease, transform .16s ease;
+}
+
+.mn-favorite-toggle:hover,
+.mn-server-row.is-favorite .mn-favorite-toggle {
+  color: #ffd86b !important;
+  transform: scale(1.08);
+}
+
+.mn-server-row.is-favorite {
+  border-color: rgba(255, 216, 107, .32) !important;
+}
+
+.mn-v6-filtered {
+  display: none !important;
+}
+
+#mn-toast-host {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 10050;
+  display: grid;
+  gap: 8px;
+  width: min(340px, calc(100vw - 30px));
+  pointer-events: none;
+}
+
+.mn-toast {
+  display: grid;
+  gap: 3px;
+  padding: 11px 13px;
+  border: 1px solid rgba(71, 209, 255, .25);
+  border-left: 3px solid #5bdcff;
+  border-radius: 9px;
+  background: rgba(2, 18, 30, .97);
+  box-shadow: 0 14px 34px rgba(0, 0, 0, .34);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity .2s ease, transform .2s ease;
+}
+
+.mn-toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.mn-toast.is-success { border-left-color: #58e59a; }
+.mn-toast.is-warning { border-left-color: #ffae78; }
+.mn-toast strong { color: #f2fbff; font-size: 11px; }
+.mn-toast span { color: rgba(190, 222, 234, .76); font-size: 9px; }
+
+@media (max-width: 900px) {
+  .mn-control-heading {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+  }
+
+  .mn-v6-suite {
+    grid-column: 1 / -1;
+    grid-row: 2;
+    width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .mn-server-row {
+    grid-template-columns: auto auto minmax(0, 1fr) auto;
+  }
+
+  #mn-toast-host {
+    right: 10px;
+    bottom: 10px;
+    width: calc(100vw - 20px);
+  }
+}

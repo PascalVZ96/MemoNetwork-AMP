@@ -50,18 +50,31 @@
     if (!panel || !list || !group) return;
 
     const entries = Array.from(group.querySelectorAll('.ServerEntry')).filter((entry) => !isCreateCard(entry));
-    const existingNames = new Set(
-      Array.from(list.querySelectorAll('.mn-server-name strong')).map((node) => node.textContent?.trim())
-    );
 
+    // Remove rows previously added by this compatibility layer. They are rebuilt
+    // every pass so duplicate display names (for example two Minecraft instances)
+    // remain correctly represented.
+    list.querySelectorAll('.mn-server-row-extra-state').forEach((row) => row.remove());
+
+    const dashboardNameCounts = new Map();
+    list.querySelectorAll('.mn-server-row:not(.mn-server-row-extra-state) .mn-server-name strong').forEach((node) => {
+      const name = node.textContent?.trim() || 'Server';
+      dashboardNameCounts.set(name, (dashboardNameCounts.get(name) || 0) + 1);
+    });
+
+    const seenEntryCounts = new Map();
     entries.forEach((entry) => {
       const name = getName(entry);
-      if (existingNames.has(name)) return;
+      const occurrence = (seenEntryCounts.get(name) || 0) + 1;
+      seenEntryCounts.set(name, occurrence);
+
+      // The primary dashboard already rendered this occurrence.
+      if (occurrence <= (dashboardNameCounts.get(name) || 0)) return;
 
       const state = getState(entry);
       const row = document.createElement('button');
       row.type = 'button';
-      row.className = `mn-server-row is-${state} mn-server-row-no-metrics`;
+      row.className = `mn-server-row is-${state} mn-server-row-no-metrics mn-server-row-extra-state`;
       row.innerHTML = `
         <span class="mn-server-state"></span>
         <span class="mn-server-name"><strong>${name}</strong><small>${stateLabel(state)}</small></span>
@@ -73,7 +86,6 @@
         window.setTimeout(() => entry.classList.remove('mn-card-highlight'), 1400);
       });
       list.appendChild(row);
-      existingNames.add(name);
     });
 
     const states = entries.map(getState);
@@ -99,7 +111,7 @@
 
   const start = () => {
     update();
-    window.setInterval(update, 500);
+    window.setInterval(update, 400);
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });

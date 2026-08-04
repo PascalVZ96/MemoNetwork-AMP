@@ -1,45 +1,4 @@
-/* MemoNetwork Edition v6.0 — Control Suite */
-
-.mn-server-row {
-  grid-template-columns: 24px auto minmax(135px, 1.2fr) repeat(3, minmax(72px, .55fr)) auto;
-}
-
-.mn-favorite-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: stretch;
-  width: 24px;
-  min-width: 24px;
-  margin: -5px 0;
-  padding: 0;
-  border: 0 !important;
-  border-radius: 0 !important;
-  background: transparent !important;
-  color: rgba(162, 208, 226, .48);
-  box-shadow: none !important;
-  font-size: 17px;
-  line-height: 1;
-  user-select: none;
-  pointer-events: none;
-  transition: color .16s ease, transform .16s ease;
-}
-
-.mn-favorite-toggle::before,
-.mn-favorite-toggle::after {
-  display: none !important;
-  content: none !important;
-}
-
-.mn-server-row:hover .mn-favorite-toggle,
-.mn-server-row.is-favorite .mn-favorite-toggle {
-  color: #ffd86b;
-  transform: scale(1.08);
-}
-
-.mn-server-row.is-favorite {
-  border-color: rgba(255, 216, 107, .32) !important;
-}
+/* MemoNetwork Edition v6.0 — status notifications */
 
 #mn-toast-host {
   position: fixed;
@@ -77,18 +36,6 @@
 .mn-toast span { color: rgba(190, 222, 234, .76); font-size: 9px; }
 
 @media (max-width: 700px) {
-  .mn-server-row {
-    grid-template-columns: 30px auto minmax(0, 1fr) auto;
-  }
-
-  .mn-favorite-toggle {
-    width: 30px;
-    min-width: 30px;
-    min-height: 42px;
-    margin: -7px 0;
-    font-size: 19px;
-  }
-
   #mn-toast-host {
     right: 10px;
     bottom: 10px;

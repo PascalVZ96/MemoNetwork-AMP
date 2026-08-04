@@ -1,9 +1,9 @@
 {
   "Name": "MemoNetwork",
-  "Version": "5.0.2",
-  "UpdatedDate": "2026/08/03",
-  "Description": "MemoNetwork Control Panel v5.0.2 with hamburger drawer for narrow desktop and tablet windows",
+  "Version": "5.1.0",
+  "UpdatedDate": "2026/08/04",
+  "Description": "MemoNetwork Control Panel v5.1.0 with Dashboard Pro and MemoNetwork build footer",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
-  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Drawer"]
+  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard"]
 }

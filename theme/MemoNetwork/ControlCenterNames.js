@@ -94,7 +94,11 @@
 
     listObserver?.disconnect();
     observedList = list;
-    listObserver = new MutationObserver(() => requestAnimationFrame(restoreNames));
+
+    // MutationObserver callbacks run before the browser paints. Restoring the
+    // cached names synchronously prevents a one-frame "Instance not running"
+    // flash when MemoNetwork.js rebuilds the rows.
+    listObserver = new MutationObserver(() => restoreNames());
     listObserver.observe(list, { childList: true, subtree: true });
   };
 

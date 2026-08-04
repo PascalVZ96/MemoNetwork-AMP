@@ -1,8 +1,10 @@
 (() => {
   'use strict';
 
-  const VERSION = '5.1.0';
-  const BUILD = '04-08-2026 · 16:48';
+  const BUILD_INFO = window.MemoNetworkBuild ?? {};
+  const VERSION = BUILD_INFO.version ?? '5.1.0';
+  const COMMIT = BUILD_INFO.commit ?? 'unknown';
+  const BUILD_DATE = BUILD_INFO.date ?? 'unknown';
 
   const numberFrom = (value) => {
     const number = Number(String(value ?? '').replace(',', '.'));
@@ -134,21 +136,9 @@
     if (footer) {
       footer.className = 'mn-v51-footer';
       footer.removeAttribute('data-viewmodel');
-      const html = `<span id="versionHeadline">v${VERSION}</span><div class="tiny">Built ${BUILD}</div>`;
+      const html = `<span id="versionHeadline">v${VERSION} • ${COMMIT}</span><div class="tiny">Built ${BUILD_DATE}</div>`;
       if (footer.innerHTML !== html) footer.innerHTML = html;
     }
-
-    Array.from(document.querySelectorAll('body *')).forEach((element) => {
-      const text = element.textContent?.replace(/\s+/g, ' ').trim() ?? '';
-      if (text !== 'MEMONETWORK CONTROL PANEL') return;
-      if (Array.from(element.children).some((child) => child.textContent?.replace(/\s+/g, ' ').trim() === text)) return;
-
-      const candidate = element.closest('button, a, [role="button"], .slimButton, .button, .Button') ?? element;
-      candidate.style.setProperty('display', 'none', 'important');
-      if (candidate.parentElement?.children.length === 1) {
-        candidate.parentElement.style.setProperty('display', 'none', 'important');
-      }
-    });
   };
 
   const drawerMedia = window.matchMedia('(min-width: 701px) and (max-width: 1180px)');

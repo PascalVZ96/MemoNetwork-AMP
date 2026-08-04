@@ -2,16 +2,17 @@
   'use strict';
 
   const BUILD_INFO = window.MemoNetworkBuild ?? {};
-  const VERSION = BUILD_INFO.version ?? '5.3.0';
+  const VERSION = BUILD_INFO.version ?? '6.0.0';
   const COMMIT = BUILD_INFO.commit ?? 'unknown';
   const BUILD_DATE = BUILD_INFO.date ?? 'unknown';
   const previousStates = new Map();
   const activity = [];
   let initialized = false;
 
+  const compact = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
   const numberFrom = (value) => {
-    const number = Number(String(value ?? '').replace(',', '.'));
-    return Number.isFinite(number) ? number : 0;
+    const parsed = Number(String(value ?? '').replace(',', '.'));
+    return Number.isFinite(parsed) ? parsed : 0;
   };
 
   const ratioFrom = (text) => {
@@ -20,12 +21,11 @@
   };
 
   const memoryFrom = (text) => {
-    const value = String(text ?? '').trim();
+    const value = compact(text);
     const ratio = ratioFrom(value);
-    const unitMatch = value.match(/\b(KB|MB|GB|TB)\b/i);
-    const unit = (unitMatch?.[1] ?? 'GB').toUpperCase();
+    const unit = (value.match(/\b(KB|MB|GB|TB)\b/i)?.[1] ?? 'GB').toUpperCase();
     const factor = { KB: 1 / 1048576, MB: 1 / 1024, GB: 1, TB: 1024 }[unit] ?? 1;
-    return { used: ratio.used * factor, total: ratio.total * factor, sourceUnit: unit };
+    return { used: ratio.used * factor, total: ratio.total * factor };
   };
 
   const formatMemory = (gb) => gb > 0 && gb < 1
@@ -38,8 +38,8 @@
   };
 
   const metricData = (metric) => ({
-    label: metric?.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '',
-    value: metric?.querySelector('h4')?.textContent?.trim() ?? ''
+    label: compact(metric?.querySelector('h3')?.textContent).toLowerCase(),
+    value: compact(metric?.querySelector('h4')?.textContent)
   });
 
   const findMetric = (entry, terms) => Array.from(entry.querySelectorAll('.ServerEntryMetric')).find((metric) => {
@@ -53,18 +53,18 @@
       let percentage = 0;
       if (label.includes('cpu')) percentage = percentFrom(value);
       else if (label.includes('memory') || label.includes('ram')) {
-        const ratio = memoryFrom(value);
-        percentage = ratio.total > 0 ? (ratio.used / ratio.total) * 100 : 0;
+        const memory = memoryFrom(value);
+        percentage = memory.total > 0 ? (memory.used / memory.total) * 100 : 0;
       } else if (label.includes('user') || label.includes('player')) {
-        const ratio = ratioFrom(value);
-        percentage = ratio.total > 0 ? (ratio.used / ratio.total) * 100 : 0;
+        const players = ratioFrom(value);
+        percentage = players.total > 0 ? (players.used / players.total) * 100 : 0;
       }
       metric.style.setProperty('--mn-progress', `${Math.max(0, Math.min(100, percentage)).toFixed(2)}%`);
     });
   };
 
   const findLocalInstancesHeader = () => Array.from(document.querySelectorAll('.ServerGroupHeader')).find((header) =>
-    header.querySelector('.ServerGroupName > span')?.textContent?.trim() === 'Local Instances' &&
+    compact(header.querySelector('.ServerGroupName > span')?.textContent) === 'Local Instances' &&
     !header.classList.contains('loadPending')) ?? null;
 
   const findLocalInstancesGroup = (header) => {
@@ -73,31 +73,48 @@
       if (node.querySelector('.ServerEntry')) return node;
       node = node.parentElement;
     }
-    return null;
+    return document;
   };
-
-  const getEntries = (root = document) => Array.from(root.querySelectorAll('.ServerEntry')).filter((entry) =>
-    !/create instance/i.test(entry.textContent ?? '') &&
-    (entry.querySelector('.ServerEntryName, .ServerEntryTitle, h2, h3') || /waiting for user input|application waiting|running|offline/i.test(entry.textContent ?? ''))
-  );
 
   const rawName = (entry) => {
     for (const selector of ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3']) {
-      const text = entry.querySelector(selector)?.textContent?.trim();
-      if (text && !/cpu|memory|users|application waiting/i.test(text)) return text.replace(/\s+SERVER\s*$/i, '').trim();
+      const value = compact(entry.querySelector(selector)?.textContent);
+      if (value && !/cpu|memory|users|application waiting|application sleeping/i.test(value)) {
+        return value.replace(/\s+SERVER\s*$/i, '').trim();
+      }
     }
     return 'Server';
   };
 
+  const getEntries = (root) => Array.from(root.querySelectorAll('.ServerEntry')).filter((entry) =>
+    !/create instance/i.test(compact(entry.textContent)) && rawName(entry) !== 'Server'
+  );
+
   const stateFrom = (entry) => {
-    const text = (entry.textContent ?? '').replace(/\s+/g, ' ').trim();
-    if (/waiting for user input|application waiting|wacht.*invoer/i.test(text)) return 'waiting';
-    if (/starting|restarting|updating|sleeping/i.test(text)) return 'busy';
-    if (entry.classList.contains('statusRunning') || entry.getAttribute('data-state') === '20' || /\brunning\b/i.test(text)) return 'online';
+    const text = compact(entry.textContent);
+    const upper = text.toUpperCase();
+
+    if (upper.includes('WAITING FOR USER INPUT') || upper.includes('APPLICATION WAITING')) return 'waiting';
+    if (upper.includes('APPLICATION SLEEPING') || /\bSLEEPING\b/i.test(text)) return 'sleeping';
+    if (upper.includes('INSTANCE NOT RUNNING') || upper.includes('APPLICATION STOPPED') || /\bOFFLINE\b|\bSTOPPED\b/i.test(text)) return 'offline';
+    if (/\bSTARTING\b|\bRESTARTING\b|\bUPDATING\b/i.test(text)) return 'busy';
+
+    const badgeTexts = Array.from(entry.querySelectorAll('span, div'))
+      .map((node) => compact(node.textContent))
+      .filter((value) => value.length > 0 && value.length < 50);
+    if (badgeTexts.some((value) => /^RUNNING\b/i.test(value))) return 'online';
+    if (entry.classList.contains('statusRunning') || entry.getAttribute('data-state') === '20') return 'online';
+
     return 'offline';
   };
 
-  const stateLabel = (state) => ({ online: 'Running', waiting: 'Wacht op invoer', busy: 'Bezig', offline: 'Offline' }[state] ?? 'Onbekend');
+  const stateLabel = (state) => ({
+    online: 'Running',
+    sleeping: 'Sleeping',
+    waiting: 'Waiting for input',
+    busy: 'Starting',
+    offline: 'Offline'
+  }[state] ?? 'Unknown');
 
   const makeServers = (entries) => {
     const counts = new Map();
@@ -123,17 +140,25 @@
   };
 
   const addActivity = (message, kind = 'info') => {
-    activity.unshift({ message, kind, time: new Date().toLocaleTimeString('nl-NL', { hour: '2-digit', minute: '2-digit', second: '2-digit' }) });
+    activity.unshift({
+      message,
+      kind,
+      time: new Date().toLocaleTimeString('en-GB', { hour12: false })
+    });
     if (activity.length > 6) activity.length = 6;
   };
 
   const trackChanges = (servers) => {
     servers.forEach((server) => {
-      const old = previousStates.get(server.key);
+      const previous = previousStates.get(server.key);
       const current = { state: server.state, players: server.players.used };
-      if (initialized && old) {
-        if (old.state !== current.state) addActivity(`${server.name}: ${stateLabel(current.state)}`, current.state === 'online' ? 'success' : 'warning');
-        if (old.players !== current.players) addActivity(`${server.name}: ${Math.round(current.players)} speler${current.players === 1 ? '' : 's'} online`, 'players');
+      if (initialized && previous) {
+        if (previous.state !== current.state) {
+          addActivity(`${server.name}: ${stateLabel(current.state)}`, current.state === 'online' ? 'success' : 'warning');
+        }
+        if (previous.players !== current.players) {
+          addActivity(`${server.name}: ${Math.round(current.players)} player${current.players === 1 ? '' : 's'} online`, 'players');
+        }
       }
       previousStates.set(server.key, current);
     });
@@ -145,21 +170,21 @@
     panel.id = 'mn-dashboard-pro';
     panel.innerHTML = `
       <div class="mn-control-heading">
-        <div><span class="mn-health-dot"></span><strong data-health>System status controleren…</strong><small>Live Control Center</small></div>
+        <div><span class="mn-health-dot"></span><strong data-health>Checking system status…</strong><small>Live Control Center</small></div>
         <span class="mn-live-time" data-updated>--:--:--</span>
       </div>
       <div class="mn-control-layout">
         <div class="mn-server-overview" data-server-list></div>
         <aside class="mn-activity-panel">
-          <div class="mn-section-title"><strong>Live activiteit</strong><span>Deze browsersessie</span></div>
+          <div class="mn-section-title"><strong>Live activity</strong><span>This browser session</span></div>
           <div class="mn-activity-list" data-activity-list></div>
         </aside>
       </div>
       <div class="mn-summary-strip">
         <span><b data-summary-online>0</b> online</span>
-        <span><b data-summary-players>0</b> spelers</span>
-        <span><b data-summary-cpu>0%</b> gemiddelde CPU</span>
-        <span><b data-summary-memory>0 GB</b> RAM in gebruik</span>
+        <span><b data-summary-players>0</b> players</span>
+        <span><b data-summary-cpu>0%</b> average CPU</span>
+        <span><b data-summary-memory>0 GB</b> RAM in use</span>
       </div>`;
     return panel;
   };
@@ -167,45 +192,46 @@
   const renderServers = (panel, servers) => {
     const list = panel.querySelector('[data-server-list]');
     const html = servers.map((server, index) => `
-      <button type="button" class="mn-server-row is-${server.state}" data-server-index="${index}">
+      <button type="button" class="mn-server-row is-${server.state}" data-server-index="${index}" aria-label="Open ${server.name}">
         <span class="mn-server-state"></span>
         <span class="mn-server-name"><strong>${server.name}</strong><small>${stateLabel(server.state)}</small></span>
         <span><b>${server.players.total > 0 ? `${Math.round(server.players.used)}/${Math.round(server.players.total)}` : '—'}</b><small>Players</small></span>
         <span><b>${server.running ? `${server.cpu.toFixed(1)}%` : '—'}</b><small>CPU</small></span>
-        <span><b>${server.memory.used > 0 ? formatMemory(server.memory.used) : '—'}</b><small>RAM</small></span>
-        <span class="mn-row-arrow">›</span>
+        <span><b>${server.running && server.memory.used > 0 ? formatMemory(server.memory.used) : '—'}</b><small>RAM</small></span>
       </button>`).join('');
 
-    if (list.innerHTML !== html) {
-      list.innerHTML = html;
-      list.querySelectorAll('[data-server-index]').forEach((button) => {
-        button.addEventListener('click', () => {
-          const server = servers[Number(button.dataset.serverIndex)];
-          server?.entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
-          server?.entry.classList.add('mn-card-highlight');
-          window.setTimeout(() => server?.entry.classList.remove('mn-card-highlight'), 1400);
-        });
+    if (list.innerHTML === html) return;
+    list.innerHTML = html;
+    list.querySelectorAll('[data-server-index]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const server = servers[Number(button.dataset.serverIndex)];
+        if (!server?.entry) return;
+        server.entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        server.entry.classList.add('mn-card-highlight');
+        window.setTimeout(() => server.entry.classList.remove('mn-card-highlight'), 1400);
       });
-    }
+    });
   };
 
   const renderActivity = (panel) => {
     const list = panel.querySelector('[data-activity-list]');
-    const items = activity.length ? activity : [{ time: '--:--:--', message: 'Wachten op statuswijzigingen…', kind: 'muted' }];
-    list.innerHTML = items.map((item) => `<div class="mn-activity-item is-${item.kind}"><time>${item.time}</time><span>${item.message}</span></div>`).join('');
+    const items = activity.length
+      ? activity
+      : [{ time: '--:--:--', message: 'Waiting for status changes…', kind: 'muted' }];
+    list.innerHTML = items.map((item) =>
+      `<div class="mn-activity-item is-${item.kind}"><time>${item.time}</time><span>${item.message}</span></div>`
+    ).join('');
   };
 
   const updateControlCenter = () => {
     const header = findLocalInstancesHeader();
     if (!header) return;
-    document.querySelector('.ServerGroupHeader.loadPending #mn-dashboard-pro')?.remove();
 
     let panel = document.getElementById('mn-dashboard-pro');
     if (!panel) panel = createControlCenter();
     if (panel.parentElement !== header) header.appendChild(panel);
 
-    const group = findLocalInstancesGroup(header);
-    const servers = makeServers(getEntries(group ?? document));
+    const servers = makeServers(getEntries(findLocalInstancesGroup(header)));
     const active = servers.filter((server) => server.running);
     trackChanges(servers);
     renderServers(panel, servers);
@@ -214,20 +240,23 @@
     const players = active.reduce((sum, server) => sum + server.players.used, 0);
     const cpu = active.length ? active.reduce((sum, server) => sum + server.cpu, 0) / active.length : 0;
     const memory = active.reduce((sum, server) => sum + server.memory.used, 0);
-    const waiting = servers.filter((server) => server.state === 'waiting').length;
-    const busy = servers.filter((server) => server.state === 'busy').length;
-    const offline = servers.filter((server) => server.state === 'offline').length;
+    const counts = {
+      waiting: servers.filter((server) => server.state === 'waiting').length,
+      sleeping: servers.filter((server) => server.state === 'sleeping').length,
+      busy: servers.filter((server) => server.state === 'busy').length,
+      offline: servers.filter((server) => server.state === 'offline').length
+    };
 
-    panel.classList.toggle('has-attention', waiting > 0 || busy > 0);
-    panel.classList.toggle('has-offline', waiting === 0 && busy === 0 && offline > 0);
-    panel.querySelector('[data-health]').textContent = waiting > 0
-      ? `${waiting} server${waiting === 1 ? '' : 's'} wacht${waiting === 1 ? '' : 'en'} op invoer`
-      : busy > 0
-        ? `${busy} server${busy === 1 ? '' : 's'} bezig`
-        : offline > 0
-          ? `${offline} server${offline === 1 ? '' : 's'} offline`
-          : 'Alle systemen operationeel';
-    panel.querySelector('[data-updated]').textContent = `Live · ${new Date().toLocaleTimeString('nl-NL', { hour12: false })}`;
+    const notices = [];
+    if (counts.waiting) notices.push(`${counts.waiting} waiting for input`);
+    if (counts.sleeping) notices.push(`${counts.sleeping} sleeping`);
+    if (counts.busy) notices.push(`${counts.busy} starting`);
+    if (counts.offline) notices.push(`${counts.offline} offline`);
+
+    panel.classList.toggle('has-attention', counts.waiting > 0 || counts.sleeping > 0 || counts.busy > 0);
+    panel.classList.toggle('has-offline', counts.offline > 0);
+    panel.querySelector('[data-health]').textContent = notices.length ? notices.join(' • ') : 'All systems operational';
+    panel.querySelector('[data-updated]').textContent = `Live · ${new Date().toLocaleTimeString('en-GB', { hour12: false })}`;
     panel.querySelector('[data-summary-online]').textContent = `${active.length}/${servers.length}`;
     panel.querySelector('[data-summary-players]').textContent = String(Math.round(players));
     panel.querySelector('[data-summary-cpu]').textContent = `${cpu.toFixed(1)}%`;
@@ -257,7 +286,7 @@
       toggle.id = 'mn-desktop-drawer-toggle';
       toggle.type = 'button';
       toggle.innerHTML = '<span aria-hidden="true">☰</span>';
-      toggle.setAttribute('aria-label', 'Menu openen');
+      toggle.setAttribute('aria-label', 'Open menu');
       toggle.setAttribute('aria-expanded', 'false');
       document.body.append(toggle);
       toggle.addEventListener('click', () => {
@@ -280,19 +309,8 @@
     ensureDesktopDrawer();
   };
 
-  let updateQueued = false;
-  const queueUpdate = () => {
-    if (updateQueued) return;
-    updateQueued = true;
-    requestAnimationFrame(() => {
-      updateQueued = false;
-      update();
-    });
-  };
-
   const start = () => {
     update();
-    new MutationObserver(queueUpdate).observe(document.body, { childList: true, subtree: true });
     window.setInterval(update, 1500);
     drawerMedia.addEventListener?.('change', () => { if (!drawerMedia.matches) closeDrawer(); });
     document.addEventListener('keydown', (event) => { if (event.key === 'Escape') closeDrawer(); });

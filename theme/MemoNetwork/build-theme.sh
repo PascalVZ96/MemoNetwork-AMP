@@ -14,6 +14,7 @@ MODULES=(
   "37-dashboard-pro.css"
   "38-control-center-collapse.css"
   "38b-control-center-states.css"
+  "38c-control-suite.css"
   "39-live-metrics.css"
   "40-console.css"
   "50-filemanager.css"
@@ -30,7 +31,7 @@ MODULES=(
 )
 
 {
-  echo '/* MemoNetwork Edition v5.3.0 - generated file */'
+  echo '/* MemoNetwork Edition v6.0.0 - generated file */'
   for module in "${MODULES[@]}"; do
     echo
     echo "/* ===== $module ===== */"

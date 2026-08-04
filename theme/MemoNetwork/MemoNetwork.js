@@ -19,14 +19,27 @@
     return match ? { used: numberFrom(match[1]), total: numberFrom(match[2]) } : { used: 0, total: 0 };
   };
 
+  const memoryFrom = (text) => {
+    const value = String(text ?? '').trim();
+    const ratio = ratioFrom(value);
+    const unitMatch = value.match(/\b(KB|MB|GB|TB)\b/i);
+    const unit = (unitMatch?.[1] ?? 'GB').toUpperCase();
+    const factor = { KB: 1 / 1048576, MB: 1 / 1024, GB: 1, TB: 1024 }[unit] ?? 1;
+    return { used: ratio.used * factor, total: ratio.total * factor, sourceUnit: unit };
+  };
+
+  const formatMemory = (gb) => gb > 0 && gb < 1
+    ? `${Math.round(gb * 1024)} MB`
+    : `${gb.toFixed(2)} GB`;
+
   const percentFrom = (text) => {
     const match = String(text ?? '').match(/(-?\d+(?:[.,]\d+)?)\s*%/);
     return match ? numberFrom(match[1]) : 0;
   };
 
   const metricData = (metric) => ({
-    label: metric.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '',
-    value: metric.querySelector('h4')?.textContent?.trim() ?? ''
+    label: metric?.querySelector('h3')?.textContent?.trim().toLowerCase() ?? '',
+    value: metric?.querySelector('h4')?.textContent?.trim() ?? ''
   });
 
   const findMetric = (entry, terms) => Array.from(entry.querySelectorAll('.ServerEntryMetric')).find((metric) => {
@@ -39,7 +52,10 @@
       const { label, value } = metricData(metric);
       let percentage = 0;
       if (label.includes('cpu')) percentage = percentFrom(value);
-      if (label.includes('memory') || label.includes('ram') || label.includes('user') || label.includes('player')) {
+      else if (label.includes('memory') || label.includes('ram')) {
+        const ratio = memoryFrom(value);
+        percentage = ratio.total > 0 ? (ratio.used / ratio.total) * 100 : 0;
+      } else if (label.includes('user') || label.includes('player')) {
         const ratio = ratioFrom(value);
         percentage = ratio.total > 0 ? (ratio.used / ratio.total) * 100 : 0;
       }
@@ -47,10 +63,9 @@
     });
   };
 
-  const findLocalInstancesHeader = () => Array.from(document.querySelectorAll('.ServerGroupHeader')).find((header) => {
-    const name = header.querySelector('.ServerGroupName > span')?.textContent?.trim() ?? '';
-    return name === 'Local Instances' && !header.classList.contains('loadPending');
-  }) ?? null;
+  const findLocalInstancesHeader = () => Array.from(document.querySelectorAll('.ServerGroupHeader')).find((header) =>
+    header.querySelector('.ServerGroupName > span')?.textContent?.trim() === 'Local Instances' &&
+    !header.classList.contains('loadPending')) ?? null;
 
   const findLocalInstancesGroup = (header) => {
     let node = header?.parentElement ?? null;
@@ -62,36 +77,49 @@
   };
 
   const getEntries = (root = document) => Array.from(root.querySelectorAll('.ServerEntry')).filter((entry) =>
-    entry.querySelector('.ServerEntryMetric') && !/create instance/i.test(entry.textContent ?? '')
+    !/create instance/i.test(entry.textContent ?? '') &&
+    (entry.querySelector('.ServerEntryName, .ServerEntryTitle, h2, h3') || /waiting for user input|application waiting|running|offline/i.test(entry.textContent ?? ''))
   );
 
-  const isRunning = (entry) =>
-    entry.classList.contains('statusRunning') ||
-    entry.getAttribute('data-state') === '20' ||
-    /running/i.test(entry.querySelector('.ServerEntryStatus')?.textContent ?? entry.textContent ?? '');
-
-  const serverName = (entry) => {
-    const candidates = ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3'];
-    for (const selector of candidates) {
+  const rawName = (entry) => {
+    for (const selector of ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3']) {
       const text = entry.querySelector(selector)?.textContent?.trim();
-      if (text && !/cpu|memory|users/i.test(text)) return text.replace(/\s+SERVER\s*$/i, '').trim();
+      if (text && !/cpu|memory|users|application waiting/i.test(text)) return text.replace(/\s+SERVER\s*$/i, '').trim();
     }
     return 'Server';
   };
 
-  const entryData = (entry) => {
-    const running = isRunning(entry);
-    const playersMetric = findMetric(entry, ['user', 'player']);
-    const cpuMetric = findMetric(entry, ['cpu']);
-    const memoryMetric = findMetric(entry, ['memory', 'ram']);
-    return {
-      entry,
-      name: serverName(entry),
-      running,
-      players: ratioFrom(playersMetric ? metricData(playersMetric).value : ''),
-      cpu: percentFrom(cpuMetric ? metricData(cpuMetric).value : ''),
-      memory: ratioFrom(memoryMetric ? metricData(memoryMetric).value : '')
-    };
+  const stateFrom = (entry) => {
+    const text = (entry.textContent ?? '').replace(/\s+/g, ' ').trim();
+    if (/waiting for user input|application waiting|wacht.*invoer/i.test(text)) return 'waiting';
+    if (/starting|restarting|updating|sleeping/i.test(text)) return 'busy';
+    if (entry.classList.contains('statusRunning') || entry.getAttribute('data-state') === '20' || /\brunning\b/i.test(text)) return 'online';
+    return 'offline';
+  };
+
+  const stateLabel = (state) => ({ online: 'Running', waiting: 'Wacht op invoer', busy: 'Bezig', offline: 'Offline' }[state] ?? 'Onbekend');
+
+  const makeServers = (entries) => {
+    const counts = new Map();
+    return entries.map((entry) => {
+      const baseName = rawName(entry);
+      const count = (counts.get(baseName) ?? 0) + 1;
+      counts.set(baseName, count);
+      const state = stateFrom(entry);
+      const playersMetric = findMetric(entry, ['user', 'player']);
+      const cpuMetric = findMetric(entry, ['cpu']);
+      const memoryMetric = findMetric(entry, ['memory', 'ram']);
+      return {
+        entry,
+        key: `${baseName}-${count}`,
+        name: count === 1 ? baseName : `${baseName} ${count}`,
+        state,
+        running: state === 'online',
+        players: ratioFrom(playersMetric ? metricData(playersMetric).value : ''),
+        cpu: percentFrom(cpuMetric ? metricData(cpuMetric).value : ''),
+        memory: memoryFrom(memoryMetric ? metricData(memoryMetric).value : '')
+      };
+    });
   };
 
   const addActivity = (message, kind = 'info') => {
@@ -101,13 +129,13 @@
 
   const trackChanges = (servers) => {
     servers.forEach((server) => {
-      const old = previousStates.get(server.name);
-      const current = { running: server.running, players: server.players.used };
+      const old = previousStates.get(server.key);
+      const current = { state: server.state, players: server.players.used };
       if (initialized && old) {
-        if (old.running !== current.running) addActivity(`${server.name} is ${current.running ? 'gestart' : 'gestopt'}`, current.running ? 'success' : 'warning');
+        if (old.state !== current.state) addActivity(`${server.name}: ${stateLabel(current.state)}`, current.state === 'online' ? 'success' : 'warning');
         if (old.players !== current.players) addActivity(`${server.name}: ${Math.round(current.players)} speler${current.players === 1 ? '' : 's'} online`, 'players');
       }
-      previousStates.set(server.name, current);
+      previousStates.set(server.key, current);
     });
     initialized = true;
   };
@@ -139,14 +167,15 @@
   const renderServers = (panel, servers) => {
     const list = panel.querySelector('[data-server-list]');
     const html = servers.map((server, index) => `
-      <button type="button" class="mn-server-row ${server.running ? 'is-online' : 'is-offline'}" data-server-index="${index}">
+      <button type="button" class="mn-server-row is-${server.state}" data-server-index="${index}">
         <span class="mn-server-state"></span>
-        <span class="mn-server-name"><strong>${server.name}</strong><small>${server.running ? 'Running' : 'Offline'}</small></span>
-        <span><b>${Math.round(server.players.used)}/${Math.round(server.players.total)}</b><small>Players</small></span>
-        <span><b>${server.cpu.toFixed(1)}%</b><small>CPU</small></span>
-        <span><b>${server.memory.used.toFixed(2)} GB</b><small>RAM</small></span>
+        <span class="mn-server-name"><strong>${server.name}</strong><small>${stateLabel(server.state)}</small></span>
+        <span><b>${server.players.total > 0 ? `${Math.round(server.players.used)}/${Math.round(server.players.total)}` : '—'}</b><small>Players</small></span>
+        <span><b>${server.running ? `${server.cpu.toFixed(1)}%` : '—'}</b><small>CPU</small></span>
+        <span><b>${server.memory.used > 0 ? formatMemory(server.memory.used) : '—'}</b><small>RAM</small></span>
         <span class="mn-row-arrow">›</span>
       </button>`).join('');
+
     if (list.innerHTML !== html) {
       list.innerHTML = html;
       list.querySelectorAll('[data-server-index]').forEach((button) => {
@@ -170,12 +199,13 @@
     const header = findLocalInstancesHeader();
     if (!header) return;
     document.querySelector('.ServerGroupHeader.loadPending #mn-dashboard-pro')?.remove();
+
     let panel = document.getElementById('mn-dashboard-pro');
     if (!panel) panel = createControlCenter();
     if (panel.parentElement !== header) header.appendChild(panel);
 
     const group = findLocalInstancesGroup(header);
-    const servers = getEntries(group ?? document).map(entryData);
+    const servers = makeServers(getEntries(group ?? document));
     const active = servers.filter((server) => server.running);
     trackChanges(servers);
     renderServers(panel, servers);
@@ -184,15 +214,24 @@
     const players = active.reduce((sum, server) => sum + server.players.used, 0);
     const cpu = active.length ? active.reduce((sum, server) => sum + server.cpu, 0) / active.length : 0;
     const memory = active.reduce((sum, server) => sum + server.memory.used, 0);
-    const allHealthy = servers.length > 0 && active.length === servers.length;
+    const waiting = servers.filter((server) => server.state === 'waiting').length;
+    const busy = servers.filter((server) => server.state === 'busy').length;
+    const offline = servers.filter((server) => server.state === 'offline').length;
 
-    panel.classList.toggle('has-offline', !allHealthy);
-    panel.querySelector('[data-health]').textContent = allHealthy ? 'Alle systemen operationeel' : `${servers.length - active.length} server${servers.length - active.length === 1 ? '' : 's'} offline`;
+    panel.classList.toggle('has-attention', waiting > 0 || busy > 0);
+    panel.classList.toggle('has-offline', waiting === 0 && busy === 0 && offline > 0);
+    panel.querySelector('[data-health]').textContent = waiting > 0
+      ? `${waiting} server${waiting === 1 ? '' : 's'} wacht${waiting === 1 ? '' : 'en'} op invoer`
+      : busy > 0
+        ? `${busy} server${busy === 1 ? '' : 's'} bezig`
+        : offline > 0
+          ? `${offline} server${offline === 1 ? '' : 's'} offline`
+          : 'Alle systemen operationeel';
     panel.querySelector('[data-updated]').textContent = `Live · ${new Date().toLocaleTimeString('nl-NL', { hour12: false })}`;
     panel.querySelector('[data-summary-online]').textContent = `${active.length}/${servers.length}`;
     panel.querySelector('[data-summary-players]').textContent = String(Math.round(players));
     panel.querySelector('[data-summary-cpu]').textContent = `${cpu.toFixed(1)}%`;
-    panel.querySelector('[data-summary-memory]').textContent = `${memory.toFixed(2)} GB`;
+    panel.querySelector('[data-summary-memory]').textContent = formatMemory(memory);
   };
 
   const ensureFooter = () => {

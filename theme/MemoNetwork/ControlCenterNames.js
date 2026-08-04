@@ -5,8 +5,8 @@
 
   const invalidName = (text) => {
     if (!text || text.length > 48) return true;
-    return /^(server|cpu|memory|ram|users?|players?|running|offline|sleeping|busy|bezig|wacht op invoer)$/i.test(text) ||
-      /application\s+(sleeping|waiting)|waiting for user input|manage this instance|provide required information|start or configure|\d{1,3}(?:\.\d{1,3}){3}:\d+/i.test(text);
+    return /^(server|cpu|memory|ram|users?|players?|running|offline|sleeping|busy|starting|waiting for input)$/i.test(text) ||
+      /application\s+(sleeping|waiting)|waiting for user input|instance not running|manage this instance|provide required information|start or configure|\d{1,3}(?:\.\d{1,3}){3}:\d+/i.test(text);
   };
 
   const findLocalGroup = () => {
@@ -53,15 +53,7 @@
     return candidates[0]?.text ?? 'Server';
   };
 
-  const stateLabel = (entry) => {
-    const text = normalize(entry.textContent);
-    if (/application sleeping|\bsleeping\b/i.test(text)) return 'Sleeping';
-    if (/waiting for user input|application waiting/i.test(text)) return 'Wacht op invoer';
-    if (/\brunning\b/i.test(text)) return 'Running';
-    return null;
-  };
-
-  const update = () => {
+  const updateNames = () => {
     const group = findLocalGroup();
     const panel = document.getElementById('mn-dashboard-pro');
     const rows = Array.from(panel?.querySelectorAll('.mn-server-row') ?? []);
@@ -83,17 +75,12 @@
 
       const nameNode = row.querySelector('.mn-server-name strong');
       if (nameNode && nameNode.textContent !== displayName) nameNode.textContent = displayName;
-
-      const label = stateLabel(entry);
-      const stateNode = row.querySelector('.mn-server-name small');
-      if (label && stateNode && stateNode.textContent !== label) stateNode.textContent = label;
     });
   };
 
   const start = () => {
-    update();
-    new MutationObserver(() => requestAnimationFrame(update)).observe(document.body, { childList: true, subtree: true });
-    window.setInterval(update, 1000);
+    updateNames();
+    window.setInterval(updateNames, 2500);
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });

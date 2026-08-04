@@ -1,0 +1,70 @@
+/* MemoNetwork v5.3 — compact Control Center collapse */
+
+.mn-control-heading {
+  grid-template-columns: minmax(0, 1fr) auto auto;
+}
+
+.mn-control-collapse-toggle {
+  display: inline-grid !important;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 28px !important;
+  min-width: 28px !important;
+  height: 28px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 1px solid rgba(87, 218, 255, .34) !important;
+  border-radius: 7px !important;
+  background: rgba(2, 22, 37, .42) !important;
+  color: #dff8ff !important;
+  box-shadow: none !important;
+  font: inherit !important;
+  line-height: 1 !important;
+  cursor: pointer;
+}
+
+.mn-control-collapse-toggle:hover,
+.mn-control-collapse-toggle:focus-visible {
+  border-color: rgba(87, 218, 255, .72) !important;
+  background: rgba(22, 117, 153, .32) !important;
+  outline: none;
+}
+
+.mn-collapse-icon {
+  display: block;
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+#mn-dashboard-pro .mn-control-layout,
+#mn-dashboard-pro .mn-summary-strip {
+  max-height: 800px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height .2s ease, opacity .16s ease, padding .2s ease, border-width .2s ease;
+}
+
+#mn-dashboard-pro.mn-control-collapsed .mn-control-layout,
+#mn-dashboard-pro.mn-control-collapsed .mn-summary-strip {
+  max-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  border-top-width: 0 !important;
+  border-bottom-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+#mn-dashboard-pro.mn-control-collapsed .mn-control-heading {
+  border-radius: 10px;
+}
+
+@media (max-width: 700px) {
+  .mn-control-collapse-toggle {
+    width: 32px !important;
+    min-width: 32px !important;
+    height: 32px !important;
+  }
+}

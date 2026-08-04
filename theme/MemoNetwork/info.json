@@ -1,9 +1,9 @@
 {
   "Name": "MemoNetwork",
-  "Version": "5.2.0",
+  "Version": "5.3.0",
   "UpdatedDate": "2026/08/04",
-  "Description": "MemoNetwork Control Panel v5.2.0 with Dashboard Plus, live filters and expanded instance statistics",
+  "Description": "MemoNetwork Control Panel v5.3.0 with Live Control Center, server overview and session activity feed",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
-  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard"]
+  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard", "Live Status"]
 }

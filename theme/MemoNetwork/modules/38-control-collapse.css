@@ -1,0 +1,65 @@
+/* MemoNetwork v5.3 — collapsible Live Control Center */
+
+.mn-control-heading {
+  position: relative;
+  padding-right: 150px;
+}
+
+.mn-control-collapse-toggle {
+  position: absolute !important;
+  top: 50%;
+  right: 10px;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 7px;
+  min-width: 0 !important;
+  padding: 6px 9px !important;
+  border: 1px solid rgba(83, 216, 255, .26) !important;
+  border-radius: 8px !important;
+  background: rgba(2, 18, 31, .52) !important;
+  color: rgba(225, 246, 253, .9) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  line-height: 1 !important;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
+
+.mn-control-collapse-toggle:hover {
+  border-color: rgba(83, 216, 255, .56) !important;
+  background: rgba(7, 42, 65, .72) !important;
+}
+
+.mn-collapse-icon {
+  color: #5cddff;
+  font-size: 16px;
+  line-height: .7;
+}
+
+#mn-dashboard-pro.mn-control-collapsed .mn-control-layout,
+#mn-dashboard-pro.mn-control-collapsed .mn-summary-strip {
+  display: none !important;
+}
+
+#mn-dashboard-pro.mn-control-collapsed .mn-control-heading {
+  border-radius: 10px;
+}
+
+@media (max-width: 700px) {
+  .mn-control-heading {
+    min-height: 42px;
+    padding-right: 48px;
+  }
+
+  .mn-control-collapse-toggle {
+    right: 8px;
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    padding: 0 !important;
+  }
+
+  .mn-collapse-label {
+    display: none;
+  }
+}

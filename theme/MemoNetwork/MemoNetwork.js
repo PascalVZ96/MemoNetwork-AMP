@@ -4,27 +4,19 @@
   const VERSION = '5.1.0';
   const BUILD = '04-08-2026 · 16:48';
 
-  const clamp = (value, min = 0, max = 100) =>
-    Math.min(max, Math.max(min, Number.isFinite(value) ? value : 0));
-
-  const parseNumber = (value) => {
+  const numberFrom = (value) => {
     const number = Number(String(value ?? '').replace(',', '.'));
     return Number.isFinite(number) ? number : 0;
   };
 
-  const parsePercent = (text) => {
-    const match = String(text ?? '').match(/(-?\d+(?:[.,]\d+)?)\s*%/);
-    return match ? clamp(parseNumber(match[1])) : 0;
-  };
-
-  const parseRatioValues = (text) => {
+  const ratioFrom = (text) => {
     const match = String(text ?? '').match(/(-?\d+(?:[.,]\d+)?)\s*\/\s*(-?\d+(?:[.,]\d+)?)/);
-    return match ? { used: parseNumber(match[1]), total: parseNumber(match[2]) } : { used: 0, total: 0 };
+    return match ? { used: numberFrom(match[1]), total: numberFrom(match[2]) } : { used: 0, total: 0 };
   };
 
-  const parseRatio = (text) => {
-    const { used, total } = parseRatioValues(text);
-    return total > 0 ? clamp((used / total) * 100) : 0;
+  const percentFrom = (text) => {
+    const match = String(text ?? '').match(/(-?\d+(?:[.,]\d+)?)\s*%/);
+    return match ? numberFrom(match[1]) : 0;
   };
 
   const metricData = (metric) => ({
@@ -32,36 +24,32 @@
     value: metric.querySelector('h4')?.textContent?.trim() ?? ''
   });
 
-  const metricPercent = (metric) => {
-    const { label, value } = metricData(metric);
-    if (label.includes('cpu')) return parsePercent(value);
-    if (label.includes('memory') || label.includes('ram')) return parseRatio(value);
-    if (label.includes('user') || label.includes('player')) return parseRatio(value);
-    return 0;
-  };
-
-  const updateMetric = (metric) => {
-    const percent = metricPercent(metric);
-    metric.style.setProperty('--mn-progress', `${percent.toFixed(2)}%`);
-    metric.dataset.mnProgress = percent.toFixed(2);
-  };
-
-  const updateAll = (root = document) => {
-    root.querySelectorAll?.('.ServerEntryMetric').forEach(updateMetric);
+  const updateProgressBars = () => {
+    document.querySelectorAll('.ServerEntryMetric').forEach((metric) => {
+      const { label, value } = metricData(metric);
+      let percentage = 0;
+      if (label.includes('cpu')) percentage = percentFrom(value);
+      if (label.includes('memory') || label.includes('ram') || label.includes('user') || label.includes('player')) {
+        const ratio = ratioFrom(value);
+        percentage = ratio.total > 0 ? (ratio.used / ratio.total) * 100 : 0;
+      }
+      percentage = Math.max(0, Math.min(100, percentage));
+      metric.style.setProperty('--mn-progress', `${percentage.toFixed(2)}%`);
+    });
   };
 
   const createDashboard = () => {
     const panel = document.createElement('section');
     panel.id = 'mn-dashboard-pro';
     panel.innerHTML = `
-      <article class="mn-dashboard-stat" data-kind="online"><span class="mn-dashboard-stat-label">Servers online</span><strong class="mn-dashboard-stat-value" data-stat="online">0</strong><span class="mn-dashboard-stat-detail" data-detail="online">0 servers total</span></article>
-      <article class="mn-dashboard-stat" data-kind="players"><span class="mn-dashboard-stat-label">Players online</span><strong class="mn-dashboard-stat-value" data-stat="players">0</strong><span class="mn-dashboard-stat-detail" data-detail="players">0 / 0 slots</span></article>
-      <article class="mn-dashboard-stat" data-kind="cpu"><span class="mn-dashboard-stat-label">Average CPU</span><strong class="mn-dashboard-stat-value" data-stat="cpu">0%</strong><span class="mn-dashboard-stat-detail">Running instances</span></article>
-      <article class="mn-dashboard-stat" data-kind="memory"><span class="mn-dashboard-stat-label">Memory in use</span><strong class="mn-dashboard-stat-value" data-stat="memory">0 GB</strong><span class="mn-dashboard-stat-detail" data-detail="memory">0 / 0 GB</span></article>`;
+      <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Servers online</span><strong class="mn-dashboard-stat-value" data-stat="online">0</strong><span class="mn-dashboard-stat-detail" data-detail="online">0 servers total</span></article>
+      <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Players online</span><strong class="mn-dashboard-stat-value" data-stat="players">0</strong><span class="mn-dashboard-stat-detail" data-detail="players">0 / 0 slots</span></article>
+      <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Average CPU</span><strong class="mn-dashboard-stat-value" data-stat="cpu">0%</strong><span class="mn-dashboard-stat-detail">Running instances</span></article>
+      <article class="mn-dashboard-stat"><span class="mn-dashboard-stat-label">Memory in use</span><strong class="mn-dashboard-stat-value" data-stat="memory">0 GB</strong><span class="mn-dashboard-stat-detail" data-detail="memory">0 / 0 GB</span></article>`;
     return panel;
   };
 
-  const serverEntries = () => Array.from(document.querySelectorAll('.ServerEntry')).filter((entry) =>
+  const getEntries = () => Array.from(document.querySelectorAll('.ServerEntry')).filter((entry) =>
     entry.querySelector('.ServerEntryMetric') && !/create instance/i.test(entry.textContent ?? '')
   );
 
@@ -77,16 +65,13 @@
 
   const ensureDashboard = () => {
     const header = document.querySelector('.ServerGroupHeader');
-    if (!header?.parentElement) {
-      document.getElementById('mn-dashboard-pro')?.remove();
-      return;
-    }
+    if (!header) return;
 
     let panel = document.getElementById('mn-dashboard-pro');
     if (!panel) panel = createDashboard();
-    if (panel.previousElementSibling !== header) header.insertAdjacentElement('afterend', panel);
+    if (panel.parentElement !== header) header.appendChild(panel);
 
-    const entries = serverEntries();
+    const entries = getEntries();
     const active = entries.filter(isRunning);
     let playersUsed = 0;
     let playersTotal = 0;
@@ -98,20 +83,20 @@
     active.forEach((entry) => {
       const players = findMetric(entry, ['user', 'player']);
       if (players) {
-        const ratio = parseRatioValues(metricData(players).value);
+        const ratio = ratioFrom(metricData(players).value);
         playersUsed += ratio.used;
         playersTotal += ratio.total;
       }
 
       const cpu = findMetric(entry, ['cpu']);
       if (cpu) {
-        cpuTotal += parsePercent(metricData(cpu).value);
+        cpuTotal += percentFrom(metricData(cpu).value);
         cpuCount += 1;
       }
 
       const memory = findMetric(entry, ['memory', 'ram']);
       if (memory) {
-        const ratio = parseRatioValues(metricData(memory).value);
+        const ratio = ratioFrom(metricData(memory).value);
         memoryUsed += ratio.used;
         memoryTotal += ratio.total;
       }
@@ -128,15 +113,21 @@
 
   const ensureFooter = () => {
     const footer = document.getElementById('bgtext');
-    if (footer && !footer.querySelector('[data-mn-footer-version]')) {
+    if (footer) {
       footer.className = 'mn-v51-footer';
       footer.removeAttribute('data-viewmodel');
-      footer.innerHTML = `<div class="tiny" data-mn-footer-version><strong>v${VERSION}</strong><br><small>Built ${BUILD}</small></div>`;
+      const html = `<span id="versionHeadline">v${VERSION}</span><div class="tiny">Built ${BUILD}</div>`;
+      if (footer.innerHTML !== html) footer.innerHTML = html;
     }
 
-    Array.from(document.querySelectorAll('button, a, div')).forEach((element) => {
-      if (/^MEMONETWORK CONTROL PANEL$/i.test(element.textContent?.trim() ?? '')) {
-        element.style.setProperty('display', 'none', 'important');
+    document.querySelectorAll('#sideMenuContainer button, #sideMenuContainer a, #sideMenuContainer div').forEach((element) => {
+      const text = element.textContent?.replace(/\s+/g, ' ').trim() ?? '';
+      if (text !== 'MEMONETWORK CONTROL PANEL') return;
+
+      const candidate = element.closest('button, a, [role="button"], .slimButton, .button, .Button') ?? element;
+      candidate.style.setProperty('display', 'none', 'important');
+      if (candidate.parentElement && candidate.parentElement.textContent?.replace(/\s+/g, ' ').trim() === text) {
+        candidate.parentElement.style.setProperty('display', 'none', 'important');
       }
     });
   };
@@ -146,17 +137,12 @@
   const markDrawerChrome = () => {
     const menu = document.querySelector('#sideMenuContainer');
     if (!menu) return;
-
     menu.querySelectorAll('img').forEach((image) => {
-      const src = image.getAttribute('src') ?? '';
-      const alt = image.getAttribute('alt') ?? '';
       const rect = image.getBoundingClientRect();
-      const isLargeBranding = rect.width > 58 || rect.height > 58;
-      const looksLikeBranding = /FullLogo|MemoNetwork|logo/i.test(`${src} ${alt}`);
-      if (isLargeBranding || looksLikeBranding) {
+      const source = `${image.getAttribute('src') ?? ''} ${image.getAttribute('alt') ?? ''}`;
+      if (rect.width > 58 || rect.height > 58 || /FullLogo|MemoNetwork|logo/i.test(source)) {
         image.classList.add('mn-drawer-hide');
-        const parent = image.parentElement;
-        if (parent && parent.children.length === 1) parent.classList.add('mn-drawer-hide');
+        if (image.parentElement?.children.length === 1) image.parentElement.classList.add('mn-drawer-hide');
       }
     });
   };
@@ -175,14 +161,9 @@
       toggle.id = 'mn-desktop-drawer-toggle';
       toggle.type = 'button';
       toggle.innerHTML = '<span aria-hidden="true">☰</span>';
-      toggle.title = 'Menu';
       toggle.setAttribute('aria-label', 'Menu openen');
       toggle.setAttribute('aria-expanded', 'false');
       document.body.append(toggle);
-    }
-
-    if (!toggle.dataset.mnBound) {
-      toggle.dataset.mnBound = 'true';
       toggle.addEventListener('click', () => {
         const open = document.body.classList.toggle('mn-drawer-open');
         toggle.setAttribute('aria-expanded', String(open));
@@ -192,46 +173,31 @@
     if (!backdrop) {
       backdrop = document.createElement('div');
       backdrop.id = 'mn-drawer-backdrop';
-      document.body.append(backdrop);
-    }
-
-    if (!backdrop.dataset.mnBound) {
-      backdrop.dataset.mnBound = 'true';
       backdrop.addEventListener('click', closeDrawer);
+      document.body.append(backdrop);
     }
 
     requestAnimationFrame(markDrawerChrome);
   };
 
-  let queued = false;
-  const queueUpdate = () => {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      updateAll();
-      ensureDashboard();
-      ensureFooter();
-      ensureDesktopDrawer();
-    });
+  const update = () => {
+    updateProgressBars();
+    ensureDashboard();
+    ensureFooter();
+    ensureDesktopDrawer();
   };
 
   const start = () => {
-    queueUpdate();
+    update();
+    const observer = new MutationObserver(() => requestAnimationFrame(update));
+    observer.observe(document.body, { childList: true, subtree: true });
+    window.setInterval(update, 1500);
     drawerMedia.addEventListener?.('change', () => {
       if (!drawerMedia.matches) closeDrawer();
-      ensureDesktopDrawer();
     });
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') closeDrawer();
     });
-    const observer = new MutationObserver(queueUpdate);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.setInterval(() => {
-      updateAll();
-      ensureDashboard();
-      ensureFooter();
-    }, 1500);
   };
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });

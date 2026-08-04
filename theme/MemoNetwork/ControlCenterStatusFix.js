@@ -5,17 +5,41 @@
     !/create instance/i.test(entry.textContent ?? '')
   );
 
-  const detectState = (entry) => {
-    const text = (entry?.textContent ?? '').replace(/\s+/g, ' ').trim();
-    const badge = Array.from(entry?.querySelectorAll('*') ?? [])
-      .map((node) => node.textContent?.trim() ?? '')
-      .find((value) => /^(RUNNING|SLEEPING|OFFLINE|WAITING FOR USER INPUT|STARTING|RESTARTING|UPDATING)$/i.test(value)) ?? '';
+  const compactText = (node) => (node?.textContent ?? '').replace(/\s+/g, ' ').trim();
 
-    if (/waiting for user input|application waiting/i.test(text) || /waiting for user input/i.test(badge)) return 'waiting';
-    if (/application sleeping|\bsleeping\b/i.test(text) || /^sleeping$/i.test(badge)) return 'sleeping';
-    if (/instance not running|application stopped|\boffline\b|\bstopped\b/i.test(text) || /^offline$/i.test(badge)) return 'offline';
-    if (/starting|restarting|updating/i.test(text) || /^(starting|restarting|updating)$/i.test(badge)) return 'busy';
-    if (entry?.classList.contains('statusRunning') || entry?.getAttribute('data-state') === '20' || /^running$/i.test(badge)) return 'online';
+  const detectState = (entry) => {
+    const text = compactText(entry);
+    const upper = text.toUpperCase();
+
+    // Specific non-running states must be checked before the word RUNNING,
+    // because AMP also uses text such as "Instance not running".
+    if (
+      upper.includes('WAITING FOR USER INPUT') ||
+      upper.includes('APPLICATION WAITING')
+    ) return 'waiting';
+
+    if (
+      upper.includes('APPLICATION SLEEPING') ||
+      /(^|\s)SLEEPING(?=\s|$)/i.test(text)
+    ) return 'sleeping';
+
+    if (
+      upper.includes('INSTANCE NOT RUNNING') ||
+      upper.includes('APPLICATION STOPPED') ||
+      /(^|\s)(OFFLINE|STOPPED)(?=\s|$)/i.test(text)
+    ) return 'offline';
+
+    if (/(^|\s)(STARTING|RESTARTING|UPDATING)(?=\s|$)/i.test(text)) return 'busy';
+
+    // AMP badges can contain icon text in addition to RUNNING, so an exact
+    // element-text match is unreliable. At this point "not running" has
+    // already been excluded safely.
+    if (
+      entry?.classList.contains('statusRunning') ||
+      entry?.getAttribute('data-state') === '20' ||
+      /(^|\s)RUNNING(?=\s|$)/i.test(text)
+    ) return 'online';
+
     return 'offline';
   };
 

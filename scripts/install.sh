@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="610"
+SCRIPT_VERSION="611"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
 THEME_VERSION="${THEME_VERSION:-6.0.0}"
@@ -20,7 +20,6 @@ POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${
 COLLAPSE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterCollapse.js?v=${SCRIPT_VERSION}\"></script>"
 NAMES_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterNames.js?v=${SCRIPT_VERSION}\"></script>"
 SUITE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlSuite.js?v=${SCRIPT_VERSION}\"></script>"
-STATUS_FIX_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterStatusFix.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
     echo "Usage: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -50,6 +49,7 @@ fi
 
 mkdir -p "$TARGET"
 cp -a "$SOURCE/." "$TARGET/"
+rm -f "$TARGET/ControlCenterStatusFix.js"
 
 cat > "$TARGET/BuildInfo.js" <<EOF
 window.MemoNetworkBuild = Object.freeze({
@@ -68,9 +68,9 @@ if [[ -f "$AMP_HTML" ]]; then
     sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory|ControlCenterNames|ControlSuite|ControlCenterStatusFix)\.js[^\"]*"></script>#d' "$AMP_HTML"
 
     if grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n$STATUS_FIX_TAG\n</body>#" "$AMP_HTML"
+        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n</body>#" "$AMP_HTML"
     else
-        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" "$STATUS_FIX_TAG" >> "$AMP_HTML"
+        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
@@ -80,8 +80,8 @@ fi
 echo "MemoNetwork Edition installed for $INSTANCE_NAME."
 echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
 echo "Control Suite v${THEME_VERSION} installed."
-echo "Dashboard rows now follow the exact visible AMP card order."
-echo "Instance not running is always detected as Offline before Running."
-echo "The lightweight status correction runs once per second without a MutationObserver."
+echo "Status is now read directly from each AMP server card."
+echo "The duplicate status correction script has been removed."
+echo "Server rows are fully clickable and decorative arrows were removed."
 echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
 echo "Refresh AMP with Ctrl+Shift+R."

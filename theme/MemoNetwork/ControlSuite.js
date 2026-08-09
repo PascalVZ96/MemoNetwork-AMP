@@ -8,6 +8,7 @@
     'memonetwork-v6-favorites-v4',
     'memonetwork-v6-favorites-v5'
   ];
+
   const previousStates = new Map();
   let initialized = false;
 
@@ -28,15 +29,17 @@
     toast.innerHTML = `<strong>${title}</strong><span>${message}</span>`;
     host.appendChild(toast);
     requestAnimationFrame(() => toast.classList.add('is-visible'));
+
     window.setTimeout(() => {
       toast.classList.remove('is-visible');
       window.setTimeout(() => toast.remove(), 220);
     }, 3000);
   };
 
-  const removeFavoritesFeature = () => {
-    document.querySelectorAll('.mn-favorite-toggle').forEach((node) => node.remove());
+  const cleanLegacyFeatures = () => {
+    document.querySelectorAll('.mn-favorite-toggle, .mn-v6-suite').forEach((node) => node.remove());
     document.querySelectorAll('.mn-server-row.is-favorite').forEach((row) => row.classList.remove('is-favorite'));
+    document.querySelectorAll('.mn-v6-filtered').forEach((node) => node.classList.remove('mn-v6-filtered'));
     document.querySelectorAll('#mn-dashboard-pro .mn-server-row[title]').forEach((row) => row.removeAttribute('title'));
 
     try {
@@ -46,18 +49,16 @@
     }
   };
 
-  const removeSearch = () => {
-    document.querySelectorAll('.mn-v6-suite').forEach((node) => node.remove());
-    document.querySelectorAll('.mn-v6-filtered').forEach((node) => node.classList.remove('mn-v6-filtered'));
-  };
-
   const trackStatusChanges = () => {
-    document.querySelectorAll('#mn-dashboard-pro .mn-server-row').forEach((row, index) => {
+    const seen = new Set();
+
+    document.querySelectorAll('#mn-dashboard-pro .mn-server-row').forEach((row) => {
       const name = rowName(row);
       const state = rowState(row);
-      const key = `${name.toLocaleLowerCase('en-US')}::${index}`;
-      const previous = previousStates.get(key);
+      const key = name.toLocaleLowerCase('en-US');
+      seen.add(key);
 
+      const previous = previousStates.get(key);
       if (initialized && previous && previous !== state) {
         const kind = /running/i.test(state)
           ? 'success'
@@ -69,31 +70,31 @@
 
       previousStates.set(key, state);
     });
+
+    for (const key of previousStates.keys()) {
+      if (!seen.has(key)) previousStates.delete(key);
+    }
+
     initialized = true;
   };
 
   const update = () => {
-    removeFavoritesFeature();
-    removeSearch();
     trackStatusChanges();
   };
 
-  let queued = false;
-  const queueUpdate = () => {
-    if (queued) return;
-    queued = true;
-    requestAnimationFrame(() => {
-      queued = false;
-      update();
-    });
-  };
-
   const start = () => {
+    cleanLegacyFeatures();
     update();
-    new MutationObserver(queueUpdate).observe(document.body, { childList: true, subtree: true });
-    window.setInterval(update, 1500);
+
+    // One lightweight timer is sufficient here. The main MemoNetwork dashboard
+    // already refreshes its own data, so a second page-wide MutationObserver only
+    // adds unnecessary work.
+    window.setInterval(update, 2000);
   };
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
-  else start();
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
 })();

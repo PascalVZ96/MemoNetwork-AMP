@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="616"
+SCRIPT_VERSION="617"
 RUNTIME_REAPPLY="${MN_RUNTIME_REAPPLY:-0}"
 REAPPLY_SERVICE="/etc/systemd/system/memonetwork-amp-reapply.service"
 REAPPLY_TIMER="/etc/systemd/system/memonetwork-amp-reapply.timer"
@@ -83,9 +83,9 @@ if [[ -f "$AMP_HTML" ]]; then
 fi
 
 if [[ "$RUNTIME_REAPPLY" != "1" ]]; then
-    # Remove the old ExecStartPost drop-in; ampinstmgr.service is a oneshot/exited
-    # service and that hook can make the service restart fail.
     rm -f "$OLD_DROPIN"
+    touch "$REAPPLY_LOG"
+    chmod 644 "$REAPPLY_LOG"
 
     cat > "$REAPPLY_SERVICE" <<EOF
 [Unit]
@@ -94,21 +94,22 @@ After=ampinstmgr.service
 
 [Service]
 Type=oneshot
+WorkingDirectory=$REPO_ROOT
 Environment=MN_RUNTIME_REAPPLY=1
-ExecStart=$REPO_ROOT/scripts/install.sh $INSTANCE_NAME
-StandardOutput=append:$REAPPLY_LOG
-StandardError=append:$REAPPLY_LOG
+ExecStart=/bin/bash $REPO_ROOT/scripts/install.sh $INSTANCE_NAME
+StandardOutput=journal
+StandardError=journal
 EOF
 
     cat > "$REAPPLY_TIMER" <<EOF
 [Unit]
-Description=Re-apply MemoNetwork AMP theme after boot/restart
+Description=Re-apply MemoNetwork AMP theme automatically
 After=ampinstmgr.service
 
 [Timer]
-OnBootSec=20s
+OnBootSec=25s
 OnUnitActiveSec=30s
-AccuracySec=3s
+AccuracySec=2s
 Unit=memonetwork-amp-reapply.service
 
 [Install]
@@ -121,6 +122,7 @@ EOF
 fi
 
 if [[ "$RUNTIME_REAPPLY" == "1" ]]; then
+    printf '%s MemoNetwork automatically re-applied for %s\n' "$(date '+%F %T')" "$INSTANCE_NAME" >> "$REAPPLY_LOG"
     echo "MemoNetwork automatically re-applied."
 else
     echo "MemoNetwork Edition installed for $INSTANCE_NAME."
@@ -128,7 +130,8 @@ else
     echo "Control Suite v${THEME_VERSION} installed."
     echo "Old ampinstmgr ExecStartPost hook removed."
     echo "Persistent re-apply timer installed: memonetwork-amp-reapply.timer"
-    echo "MemoNetwork is checked and re-applied automatically every 30 seconds."
+    echo "MemoNetwork is re-applied automatically every 30 seconds."
+    echo "Service diagnostics: journalctl -u memonetwork-amp-reapply.service"
     echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
     echo "Refresh AMP with Ctrl+Shift+R."
 fi

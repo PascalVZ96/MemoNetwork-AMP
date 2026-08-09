@@ -6,6 +6,23 @@
     return name === 'Local Instances' && !header.classList.contains('loadPending');
   }) ?? null;
 
+  const ensureBrandLogo = () => {
+    const logo = document.querySelector('#sideMenu .heroImage');
+    if (!logo) return;
+
+    const src = '/Themes/AMPThemes/MemoNetwork/MemoNetwork-logo.png';
+    if (logo instanceof HTMLImageElement && logo.getAttribute('src') !== src) {
+      logo.setAttribute('src', src);
+    }
+    logo.style.setProperty('width', '168px', 'important');
+    logo.style.setProperty('height', '124px', 'important');
+    logo.style.setProperty('max-width', '168px', 'important');
+    logo.style.setProperty('max-height', 'none', 'important');
+    logo.style.setProperty('object-fit', 'contain', 'important');
+    logo.style.setProperty('object-position', 'center', 'important');
+    logo.style.setProperty('overflow', 'visible', 'important');
+  };
+
   const formatSystemInfo = () => {
     const header = findLocalHeader();
     const info = header?.querySelector('.SystemInfo');
@@ -33,6 +50,7 @@
   };
 
   const polish = () => {
+    ensureBrandLogo();
     formatSystemInfo();
     document.documentElement.classList.add('mn-hide-control-badge');
   };

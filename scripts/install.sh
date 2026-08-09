@@ -7,7 +7,11 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="614"
+SCRIPT_VERSION="615"
+RUNTIME_REAPPLY="${MN_RUNTIME_REAPPLY:-0}"
+DROPIN_DIR="/etc/systemd/system/ampinstmgr.service.d"
+DROPIN_FILE="$DROPIN_DIR/90-memonetwork.conf"
+REAPPLY_LOG="/var/log/memonetwork-amp-reapply.log"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
 THEME_VERSION="${THEME_VERSION:-6.0.0}"
@@ -36,13 +40,16 @@ if [[ ! -d "$(dirname "$TARGET")" ]]; then
     exit 1
 fi
 
-if [[ -d "$TARGET" ]]; then
+# Only make a backup during a manual install/update. Automatic restart repairs
+# are deliberately backup-free so a server restart cannot create endless copies.
+if [[ "$RUNTIME_REAPPLY" != "1" && -d "$TARGET" ]]; then
     BACKUP="${TARGET}.backup-$(date +%Y%m%d-%H%M%S)"
     echo "Creating backup: $BACKUP"
     cp -a "$TARGET" "$BACKUP"
 fi
 
-if [[ -f "$SOURCE/build-theme.sh" ]]; then
+# The compiled stylesheet only needs rebuilding during a normal install.
+if [[ "$RUNTIME_REAPPLY" != "1" && -f "$SOURCE/build-theme.sh" ]]; then
     echo "Building MemoNetwork.css..."
     bash "$SOURCE/build-theme.sh"
 fi
@@ -77,11 +84,28 @@ if [[ -f "$AMP_HTML" ]]; then
     chmod 644 "$AMP_HTML"
 fi
 
-echo "MemoNetwork Edition installed for $INSTANCE_NAME."
-echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
-echo "Control Suite v${THEME_VERSION} installed."
-echo "AMP status messages can no longer replace server names."
-echo "Cached server names are restored before the browser paints the rebuilt rows."
-echo "The initial Instance not running name flash has been removed."
-echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
-echo "Refresh AMP with Ctrl+Shift+R."
+# Install a persistent systemd hook once. AMP can regenerate AMP.html and its
+# theme directory when ampinstmgr starts, so re-apply MemoNetwork after AMP has
+# had time to finish its own startup work.
+if [[ "$RUNTIME_REAPPLY" != "1" ]]; then
+    mkdir -p "$DROPIN_DIR"
+    cat > "$DROPIN_FILE" <<EOF
+[Service]
+ExecStartPost=/bin/bash -c 'sleep 12; MN_RUNTIME_REAPPLY=1 "$REPO_ROOT/scripts/install.sh" "$INSTANCE_NAME" >> "$REAPPLY_LOG" 2>&1'
+EOF
+    chmod 644 "$DROPIN_FILE"
+    systemctl daemon-reload
+fi
+
+if [[ "$RUNTIME_REAPPLY" == "1" ]]; then
+    echo "MemoNetwork automatically re-applied after ampinstmgr restart."
+else
+    echo "MemoNetwork Edition installed for $INSTANCE_NAME."
+    echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
+    echo "Control Suite v${THEME_VERSION} installed."
+    echo "Persistent ampinstmgr restart hook installed: $DROPIN_FILE"
+    echo "MemoNetwork will automatically re-apply about 12 seconds after ampinstmgr restarts."
+    echo "Sidebar logo now uses the real image source instead of CSS content replacement."
+    echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
+    echo "Refresh AMP with Ctrl+Shift+R."
+fi

@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="618"
+SCRIPT_VERSION="619"
 RUNTIME_REAPPLY="${MN_RUNTIME_REAPPLY:-0}"
 REAPPLY_SERVICE="/etc/systemd/system/memonetwork-amp-reapply.service"
 REAPPLY_TIMER="/etc/systemd/system/memonetwork-amp-reapply.timer"
@@ -15,8 +15,12 @@ REAPPLY_LOG="/var/log/memonetwork-amp-reapply.log"
 OLD_DROPIN="/etc/systemd/system/ampinstmgr.service.d/90-memonetwork.conf"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
-THEME_VERSION="${THEME_VERSION:-6.0.0}"
-GIT_COMMIT="$(git -C "$REPO_ROOT" rev-parse --short=7 HEAD 2>/dev/null || printf 'unknown')"
+THEME_VERSION="${THEME_VERSION:-6.1.0}"
+
+# sudo/root can reject a repository owned by another user as an unsafe Git
+# directory. Mark only this repository as safe for the read-only rev-parse so
+# the footer always receives the real short commit instead of "unknown".
+GIT_COMMIT="$(git -c safe.directory="$REPO_ROOT" -C "$REPO_ROOT" rev-parse --short=7 HEAD 2>/dev/null || printf 'unknown')"
 BUILD_DATE="$(date '+%d-%m-%Y')"
 
 BUILD_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/BuildInfo.js?v=${SCRIPT_VERSION}\"></script>"
@@ -128,10 +132,12 @@ else
     echo "MemoNetwork Edition installed for $INSTANCE_NAME."
     echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
     echo "Control Suite v${THEME_VERSION} installed."
-    echo "Old ampinstmgr ExecStartPost hook removed."
+    echo "Footer build id: ${GIT_COMMIT}"
+    echo "Control Center collapse state now persists between browser sessions."
+    echo "Control Suite status tracking now uses one lightweight timer."
     echo "Persistent re-apply timer installed: memonetwork-amp-reapply.timer"
     echo "MemoNetwork is re-applied automatically every 30 seconds."
-    echo "Sidebar logo now uses automatic build-based cache busting."
+    echo "Sidebar logo uses automatic build-based cache busting."
     echo "Service diagnostics: journalctl -u memonetwork-amp-reapply.service"
     echo "Footer build: v${THEME_VERSION} • ${GIT_COMMIT} | Built ${BUILD_DATE}"
     echo "Refresh AMP with Ctrl+Shift+R."

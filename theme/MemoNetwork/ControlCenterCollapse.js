@@ -1,11 +1,11 @@
 (() => {
   'use strict';
 
-  const STORAGE_KEY = 'memonetwork-control-center-collapsed';
+  const STORAGE_KEY = 'memonetwork-control-center-collapsed-v2';
 
   const readState = () => {
     try {
-      return window.sessionStorage.getItem(STORAGE_KEY) === '1';
+      return window.localStorage.getItem(STORAGE_KEY) === '1';
     } catch {
       return false;
     }
@@ -13,7 +13,7 @@
 
   const saveState = (collapsed) => {
     try {
-      window.sessionStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0');
+      window.localStorage.setItem(STORAGE_KEY, collapsed ? '1' : '0');
     } catch {
       // Storage may be unavailable in private browser modes.
     }
@@ -21,13 +21,14 @@
 
   const applyState = (panel, collapsed) => {
     panel.classList.toggle('mn-control-collapsed', collapsed);
+    panel.dataset.mnCollapsed = collapsed ? '1' : '0';
 
     const button = panel.querySelector('#mn-control-collapse-toggle');
     if (!button) return;
 
     button.setAttribute('aria-expanded', String(!collapsed));
-    button.setAttribute('aria-label', collapsed ? 'Live Control Center uitklappen' : 'Live Control Center inklappen');
-    button.title = collapsed ? 'Uitklappen' : 'Inklappen';
+    button.setAttribute('aria-label', collapsed ? 'Expand Live Control Center' : 'Collapse Live Control Center');
+    button.title = collapsed ? 'Expand' : 'Collapse';
 
     const icon = button.querySelector('.mn-collapse-icon');
     if (icon) icon.textContent = collapsed ? '⌄' : '⌃';
@@ -64,9 +65,22 @@
     applyState(panel, readState());
   };
 
+  let queued = false;
+  const queueEnsure = () => {
+    if (queued) return;
+    queued = true;
+    window.requestAnimationFrame(() => {
+      queued = false;
+      ensureToggle();
+    });
+  };
+
   const start = () => {
     ensureToggle();
-    const observer = new MutationObserver(() => window.requestAnimationFrame(ensureToggle));
+
+    // AMP can rebuild the dashboard when instance state changes. Watch only for
+    // structural changes and restore the saved state without polling constantly.
+    const observer = new MutationObserver(queueEnsure);
     observer.observe(document.body, { childList: true, subtree: true });
   };
 

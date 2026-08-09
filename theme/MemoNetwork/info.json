@@ -1,9 +1,9 @@
 {
   "Name": "MemoNetwork",
-  "Version": "6.0.0",
-  "UpdatedDate": "2026/08/04",
-  "Description": "MemoNetwork Control Suite v6.0.0 with live server search, persistent favorites and status notifications",
+  "Version": "6.1.0",
+  "UpdatedDate": "2026/08/09",
+  "Description": "MemoNetwork Control Suite v6.1.0 with persistent Control Center state, live status tracking, restart-safe reapply and responsive system overview",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
-  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard", "Live Status", "Search", "Favorites", "Notifications"]
+  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard", "Live Status", "Notifications", "Persistent UI"]
 }

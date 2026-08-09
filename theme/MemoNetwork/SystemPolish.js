@@ -10,7 +10,10 @@
     const logo = document.querySelector('#sideMenu .heroImage');
     if (!logo) return;
 
-    const src = '/Themes/AMPThemes/MemoNetwork/MemoNetwork-logo.png';
+    const build = window.MemoNetworkBuild ?? {};
+    const cacheKey = String(build.commit ?? build.version ?? '618').replace(/[^a-z0-9._-]/gi, '');
+    const src = `/Themes/AMPThemes/MemoNetwork/MemoNetwork-logo.png?v=${encodeURIComponent(cacheKey || '618')}`;
+
     if (logo instanceof HTMLImageElement && logo.getAttribute('src') !== src) {
       logo.setAttribute('src', src);
     }

@@ -1,0 +1,138 @@
+/* MemoNetwork Edition v6.2 — Operations dashboard */
+
+.mn-control-heading {
+  flex-wrap: wrap;
+}
+
+.mn-health-copy {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+.mn-status-chips {
+  display: flex !important;
+  flex: 0 1 auto;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+#mn-dashboard-pro .mn-status-chip,
+#mn-dashboard-pro .mn-status-chip:hover,
+#mn-dashboard-pro .mn-status-chip:focus-visible,
+#mn-dashboard-pro .mn-activity-clear,
+#mn-dashboard-pro .mn-activity-clear:hover,
+#mn-dashboard-pro .mn-activity-clear:focus-visible {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  box-shadow: none !important;
+  text-transform: none !important;
+}
+
+#mn-dashboard-pro .mn-status-chip {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 7px !important;
+  border: 1px solid rgba(83, 216, 255, .18) !important;
+  border-radius: 999px !important;
+  background: rgba(2, 18, 31, .38) !important;
+  color: rgba(209, 237, 247, .82) !important;
+  font-size: 8.5px !important;
+  line-height: 1 !important;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+#mn-dashboard-pro .mn-status-chip b {
+  color: #f7fdff;
+  font-size: 9px;
+}
+
+#mn-dashboard-pro .mn-status-chip:hover,
+#mn-dashboard-pro .mn-status-chip:focus-visible {
+  border-color: rgba(83, 216, 255, .5) !important;
+  background: rgba(7, 42, 65, .66) !important;
+  color: #fff !important;
+}
+
+#mn-dashboard-pro .mn-status-chip.is-online { border-color: rgba(87, 233, 151, .25) !important; }
+#mn-dashboard-pro .mn-status-chip.is-waiting,
+#mn-dashboard-pro .mn-status-chip.is-sleeping,
+#mn-dashboard-pro .mn-status-chip.is-busy { border-color: rgba(255, 190, 91, .28) !important; }
+#mn-dashboard-pro .mn-status-chip.is-offline { border-color: rgba(255, 112, 112, .28) !important; }
+
+.mn-server-row.is-waiting .mn-server-state,
+.mn-server-row.is-sleeping .mn-server-state,
+.mn-server-row.is-busy .mn-server-state {
+  background: #ffc45c;
+  box-shadow: 0 0 10px rgba(255, 196, 92, .46);
+}
+
+.mn-server-row.is-waiting .mn-server-name strong,
+.mn-server-row.is-sleeping .mn-server-name strong,
+.mn-server-row.is-busy .mn-server-name strong {
+  color: #ffe0a6;
+}
+
+.mn-section-title {
+  justify-content: flex-start;
+}
+
+.mn-section-title > span {
+  margin-right: auto;
+}
+
+#mn-dashboard-pro .mn-activity-clear {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  padding: 2px 0 !important;
+  border: 0 !important;
+  background: none !important;
+  color: rgba(113, 210, 240, .7) !important;
+  font-size: 8px !important;
+  line-height: 1 !important;
+  cursor: pointer;
+}
+
+#mn-dashboard-pro .mn-activity-clear:hover,
+#mn-dashboard-pro .mn-activity-clear:focus-visible {
+  color: #dff8ff !important;
+}
+
+#mn-dashboard-pro.mn-control-collapsed .mn-status-chips {
+  opacity: .9;
+}
+
+@media (max-width: 900px) {
+  .mn-status-chips {
+    order: 3;
+    flex: 1 0 100%;
+    justify-content: flex-start;
+    overflow-x: auto;
+    padding-top: 2px;
+    scrollbar-width: none;
+  }
+
+  .mn-status-chips::-webkit-scrollbar { display: none; }
+}
+
+@media (max-width: 700px) {
+  .mn-control-heading {
+    gap: 8px;
+  }
+
+  .mn-health-copy {
+    flex: 1 1 calc(100% - 90px);
+  }
+
+  .mn-live-time {
+    margin-left: auto;
+  }
+
+  #mn-dashboard-pro .mn-status-chip {
+    padding: 4px 6px !important;
+    font-size: 8px !important;
+  }
+}

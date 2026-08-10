@@ -1,9 +1,9 @@
 {
   "Name": "MemoNetwork",
-  "Version": "6.2.0",
+  "Version": "6.3.0",
   "UpdatedDate": "2026/08/10",
-  "Description": "MemoNetwork Control Suite v6.2.0 with persistent Control Center state, operations status chips, session activity history, restart-safe reapply and responsive server overview",
+  "Description": "MemoNetwork Control Suite v6.3.0 with Server Insights, resource health warnings, persistent Control Center state, operations status chips, session activity history and restart-safe reapply",
   "URL": "https://github.com/PascalVZ96/MemoNetwork-AMP",
   "Author": "Pascal / MemoNetwork",
-  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard", "Live Status", "Notifications", "Persistent UI", "Operations"]
+  "Tags": ["Contributor", "Dark", "Blue", "Personal", "Modular", "Control Panel", "Responsive", "Dashboard", "Live Status", "Notifications", "Persistent UI", "Operations", "Server Insights", "Resource Health"]
 }

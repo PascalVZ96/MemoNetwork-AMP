@@ -2,11 +2,12 @@
   'use strict';
 
   const BUILD_INFO = window.MemoNetworkBuild ?? {};
-  const VERSION = BUILD_INFO.version ?? '6.0.0';
+  const VERSION = BUILD_INFO.version ?? '6.2.0';
   const COMMIT = BUILD_INFO.commit ?? 'unknown';
   const BUILD_DATE = BUILD_INFO.date ?? 'unknown';
+  const ACTIVITY_KEY = 'memonetwork-v62-activity';
   const previousStates = new Map();
-  const activity = [];
+  let activity = [];
   let initialized = false;
 
   const compact = (value) => String(value ?? '').replace(/\s+/g, ' ').trim();
@@ -79,7 +80,7 @@
   const rawName = (entry) => {
     for (const selector of ['.ServerEntryName', '.ServerEntryTitle', 'h2', 'h3']) {
       const value = compact(entry.querySelector(selector)?.textContent);
-      if (value && !/cpu|memory|users|application waiting|application sleeping/i.test(value)) {
+      if (value && !/cpu|memory|users|application waiting|application sleeping|instance not running|application idle/i.test(value)) {
         return value.replace(/\s+SERVER\s*$/i, '').trim();
       }
     }
@@ -96,7 +97,7 @@
 
     if (upper.includes('WAITING FOR USER INPUT') || upper.includes('APPLICATION WAITING')) return 'waiting';
     if (upper.includes('APPLICATION SLEEPING') || /\bSLEEPING\b/i.test(text)) return 'sleeping';
-    if (upper.includes('INSTANCE NOT RUNNING') || upper.includes('APPLICATION STOPPED') || /\bOFFLINE\b|\bSTOPPED\b/i.test(text)) return 'offline';
+    if (upper.includes('INSTANCE NOT RUNNING') || upper.includes('APPLICATION STOPPED') || upper.includes('APPLICATION IDLE') || /\bOFFLINE\b|\bSTOPPED\b|\bIDLE\b/i.test(text)) return 'offline';
     if (/\bSTARTING\b|\bRESTARTING\b|\bUPDATING\b/i.test(text)) return 'busy';
 
     const badgeTexts = Array.from(entry.querySelectorAll('span, div'))
@@ -139,17 +140,37 @@
     });
   };
 
+  const loadActivity = () => {
+    try {
+      const stored = JSON.parse(sessionStorage.getItem(ACTIVITY_KEY) || '[]');
+      activity = Array.isArray(stored) ? stored.slice(0, 8) : [];
+    } catch {
+      activity = [];
+    }
+  };
+
+  const saveActivity = () => {
+    try {
+      sessionStorage.setItem(ACTIVITY_KEY, JSON.stringify(activity.slice(0, 8)));
+    } catch {
+      // Session storage can be unavailable in private modes.
+    }
+  };
+
   const addActivity = (message, kind = 'info') => {
     activity.unshift({
       message,
       kind,
       time: new Date().toLocaleTimeString('en-GB', { hour12: false })
     });
-    if (activity.length > 6) activity.length = 6;
+    if (activity.length > 8) activity.length = 8;
+    saveActivity();
   };
 
   const trackChanges = (servers) => {
+    const currentKeys = new Set();
     servers.forEach((server) => {
+      currentKeys.add(server.key);
       const previous = previousStates.get(server.key);
       const current = { state: server.state, players: server.players.used };
       if (initialized && previous) {
@@ -162,6 +183,9 @@
       }
       previousStates.set(server.key, current);
     });
+    for (const key of previousStates.keys()) {
+      if (!currentKeys.has(key)) previousStates.delete(key);
+    }
     initialized = true;
   };
 
@@ -170,13 +194,14 @@
     panel.id = 'mn-dashboard-pro';
     panel.innerHTML = `
       <div class="mn-control-heading">
-        <div><span class="mn-health-dot"></span><strong data-health>Checking system status…</strong><small>Live Control Center</small></div>
+        <div class="mn-health-copy"><span class="mn-health-dot"></span><strong data-health>Checking system status…</strong><small>Live Control Center</small></div>
+        <div class="mn-status-chips" data-status-chips></div>
         <span class="mn-live-time" data-updated>--:--:--</span>
       </div>
       <div class="mn-control-layout">
         <div class="mn-server-overview" data-server-list></div>
         <aside class="mn-activity-panel">
-          <div class="mn-section-title"><strong>Live activity</strong><span>This browser session</span></div>
+          <div class="mn-section-title"><strong>Live activity</strong><span>This browser session</span><button type="button" class="mn-activity-clear" data-clear-activity>Clear</button></div>
           <div class="mn-activity-list" data-activity-list></div>
         </aside>
       </div>
@@ -186,7 +211,20 @@
         <span><b data-summary-cpu>0%</b> average CPU</span>
         <span><b data-summary-memory>0 GB</b> RAM in use</span>
       </div>`;
+
+    panel.querySelector('[data-clear-activity]')?.addEventListener('click', () => {
+      activity = [];
+      saveActivity();
+      renderActivity(panel);
+    });
     return panel;
+  };
+
+  const focusServer = (server) => {
+    if (!server?.entry) return;
+    server.entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    server.entry.classList.add('mn-card-highlight');
+    window.setTimeout(() => server.entry.classList.remove('mn-card-highlight'), 1400);
   };
 
   const renderServers = (panel, servers) => {
@@ -203,12 +241,26 @@
     if (list.innerHTML === html) return;
     list.innerHTML = html;
     list.querySelectorAll('[data-server-index]').forEach((button) => {
+      button.addEventListener('click', () => focusServer(servers[Number(button.dataset.serverIndex)]));
+    });
+  };
+
+  const renderStatusChips = (panel, servers) => {
+    const host = panel.querySelector('[data-status-chips]');
+    if (!host) return;
+    const order = ['online', 'waiting', 'sleeping', 'busy', 'offline'];
+    const labels = { online: 'Online', waiting: 'Waiting', sleeping: 'Sleeping', busy: 'Starting', offline: 'Offline' };
+    const counts = Object.fromEntries(order.map((state) => [state, servers.filter((server) => server.state === state).length]));
+    const html = order
+      .filter((state) => state === 'online' || counts[state] > 0)
+      .map((state) => `<button type="button" class="mn-status-chip is-${state}" data-status-state="${state}"><b>${counts[state]}</b>${labels[state]}</button>`)
+      .join('');
+    if (host.innerHTML === html) return;
+    host.innerHTML = html;
+    host.querySelectorAll('[data-status-state]').forEach((button) => {
       button.addEventListener('click', () => {
-        const server = servers[Number(button.dataset.serverIndex)];
-        if (!server?.entry) return;
-        server.entry.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        server.entry.classList.add('mn-card-highlight');
-        window.setTimeout(() => server.entry.classList.remove('mn-card-highlight'), 1400);
+        const server = servers.find((item) => item.state === button.dataset.statusState);
+        if (server) focusServer(server);
       });
     });
   };
@@ -235,6 +287,7 @@
     const active = servers.filter((server) => server.running);
     trackChanges(servers);
     renderServers(panel, servers);
+    renderStatusChips(panel, servers);
     renderActivity(panel);
 
     const players = active.reduce((sum, server) => sum + server.players.used, 0);
@@ -310,6 +363,7 @@
   };
 
   const start = () => {
+    loadActivity();
     update();
     window.setInterval(update, 1500);
     drawerMedia.addEventListener?.('change', () => { if (!drawerMedia.matches) closeDrawer(); });

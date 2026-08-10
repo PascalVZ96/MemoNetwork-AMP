@@ -1,0 +1,146 @@
+/* MemoNetwork v6.3 — Server Insights */
+
+.mn-resource-health {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border: 1px solid rgba(94, 218, 255, .18);
+  border-radius: 999px;
+  background: rgba(3, 24, 39, .42);
+  color: rgba(214, 241, 249, .8);
+  font-size: 8.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mn-resource-health.is-normal {
+  border-color: rgba(87, 233, 151, .24);
+  color: #8ef2ba;
+}
+
+.mn-resource-health.is-warning {
+  border-color: rgba(255, 192, 94, .34);
+  color: #ffd68e;
+}
+
+.mn-resource-health.is-critical {
+  border-color: rgba(255, 108, 108, .42);
+  color: #ffaaaa;
+}
+
+.mn-server-row.mn-health-warning {
+  border-color: rgba(255, 184, 77, .5) !important;
+}
+
+.mn-server-row.mn-health-critical {
+  border-color: rgba(255, 94, 94, .62) !important;
+  box-shadow: inset 3px 0 0 rgba(255, 94, 94, .72);
+}
+
+.mn-server-health-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-top: 4px;
+  padding: 2px 5px;
+  border-radius: 5px;
+  font-size: 7.5px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mn-server-health-badge.is-warning {
+  background: rgba(255, 181, 66, .13);
+  color: #ffd28a;
+}
+
+.mn-server-health-badge.is-critical {
+  background: rgba(255, 91, 91, .15);
+  color: #ffaaaa;
+}
+
+.mn-insights-alerts {
+  display: grid;
+  gap: 5px;
+  margin-bottom: 7px;
+}
+
+.mn-insights-ok {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-radius: 7px;
+  background: rgba(56, 190, 117, .08);
+  color: rgba(188, 239, 211, .78);
+  font-size: 8.5px;
+}
+
+.mn-insights-ok span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #57e997;
+  box-shadow: 0 0 8px rgba(87, 233, 151, .5);
+}
+
+.mn-insight-alert {
+  display: grid !important;
+  grid-template-columns: minmax(75px, auto) minmax(0, 1fr);
+  gap: 8px;
+  width: 100%;
+  padding: 6px 8px !important;
+  border-radius: 7px !important;
+  background: rgba(7, 35, 54, .54) !important;
+  text-align: left;
+}
+
+.mn-insight-alert strong,
+.mn-insight-alert span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mn-insight-alert strong {
+  color: #f1fbff;
+  font-size: 8.5px;
+}
+
+.mn-insight-alert span {
+  color: rgba(213, 237, 246, .78);
+  font-size: 8px;
+}
+
+.mn-insight-alert.is-warning {
+  border: 1px solid rgba(255, 184, 77, .26) !important;
+  border-left: 2px solid #ffbd62 !important;
+}
+
+.mn-insight-alert.is-critical {
+  border: 1px solid rgba(255, 94, 94, .28) !important;
+  border-left: 2px solid #ff6b6b !important;
+}
+
+@media (max-width: 900px) {
+  .mn-resource-health {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .mn-server-health-badge {
+    font-size: 7px;
+  }
+
+  .mn-insight-alert {
+    grid-template-columns: 1fr !important;
+    gap: 2px;
+  }
+}

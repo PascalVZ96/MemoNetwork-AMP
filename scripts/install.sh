@@ -7,7 +7,7 @@ SOURCE="$REPO_ROOT/theme/MemoNetwork"
 WEBROOT="/home/amp/.ampdata/instances/$INSTANCE_NAME/WebRoot"
 TARGET="$WEBROOT/Themes/AMPThemes/MemoNetwork"
 AMP_HTML="$WEBROOT/AMP.html"
-SCRIPT_VERSION="620"
+SCRIPT_VERSION="621"
 RUNTIME_REAPPLY="${MN_RUNTIME_REAPPLY:-0}"
 REAPPLY_SERVICE="/etc/systemd/system/memonetwork-amp-reapply.service"
 REAPPLY_TIMER="/etc/systemd/system/memonetwork-amp-reapply.timer"
@@ -15,7 +15,7 @@ REAPPLY_LOG="/var/log/memonetwork-amp-reapply.log"
 OLD_DROPIN="/etc/systemd/system/ampinstmgr.service.d/90-memonetwork.conf"
 
 THEME_VERSION="$(sed -n 's/.*"Version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$SOURCE/info.json" | head -n1)"
-THEME_VERSION="${THEME_VERSION:-6.2.0}"
+THEME_VERSION="${THEME_VERSION:-6.3.0}"
 
 GIT_COMMIT="$(git -c safe.directory="$REPO_ROOT" -C "$REPO_ROOT" rev-parse --short=7 HEAD 2>/dev/null || printf 'unknown')"
 BUILD_DATE="$(date '+%d-%m-%Y')"
@@ -26,6 +26,7 @@ POLISH_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/SystemPolish.js?v=${
 COLLAPSE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterCollapse.js?v=${SCRIPT_VERSION}\"></script>"
 NAMES_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlCenterNames.js?v=${SCRIPT_VERSION}\"></script>"
 SUITE_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ControlSuite.js?v=${SCRIPT_VERSION}\"></script>"
+INSIGHTS_TAG="    <script src=\"/Themes/AMPThemes/MemoNetwork/ServerInsights.js?v=${SCRIPT_VERSION}\"></script>"
 
 if [[ $EUID -ne 0 ]]; then
     echo "Usage: sudo ./scripts/install.sh [INSTANCE_NAME]"
@@ -71,12 +72,12 @@ find "$TARGET" -type f -exec chmod 644 {} \;
 chmod 755 "$TARGET/build-theme.sh" 2>/dev/null || true
 
 if [[ -f "$AMP_HTML" ]]; then
-    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory|ControlCenterNames|ControlSuite|ControlCenterStatusFix)\.js[^\"]*"></script>#d' "$AMP_HTML"
+    sed -Ei '\#<script src="/Themes/AMPThemes/MemoNetwork/(DashboardPro|BuildInfo|MemoNetwork|SystemPolish|ControlCenterCollapse|ControlCenterStates|ControlCenterMemory|ControlCenterNames|ControlSuite|ControlCenterStatusFix|ServerInsights)\.js[^\"]*"></script>#d' "$AMP_HTML"
 
     if grep -q '</body>' "$AMP_HTML"; then
-        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n</body>#" "$AMP_HTML"
+        sed -i "s#</body>#$BUILD_TAG\n$SCRIPT_TAG\n$POLISH_TAG\n$COLLAPSE_TAG\n$NAMES_TAG\n$SUITE_TAG\n$INSIGHTS_TAG\n</body>#" "$AMP_HTML"
     else
-        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" >> "$AMP_HTML"
+        printf '\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n' "$BUILD_TAG" "$SCRIPT_TAG" "$POLISH_TAG" "$COLLAPSE_TAG" "$NAMES_TAG" "$SUITE_TAG" "$INSIGHTS_TAG" >> "$AMP_HTML"
     fi
 
     chown amp:amp "$AMP_HTML"
@@ -130,8 +131,10 @@ else
     echo "MemoNetwork JavaScript cache version: $SCRIPT_VERSION"
     echo "Control Suite v${THEME_VERSION} installed."
     echo "Footer build id: ${GIT_COMMIT}"
+    echo "Server Insights enabled with CPU and RAM resource health warnings."
+    echo "Resource alerts are shown inside the Control Center without a page-wide polling loop."
     echo "Operations status chips and quick server navigation enabled."
-    echo "Live activity now persists for the current browser session and can be cleared."
+    echo "Live activity persists for the current browser session and can be cleared."
     echo "Control Center collapse state persists between browser sessions."
     echo "Persistent re-apply timer installed: memonetwork-amp-reapply.timer"
     echo "MemoNetwork is re-applied automatically every 30 seconds."
